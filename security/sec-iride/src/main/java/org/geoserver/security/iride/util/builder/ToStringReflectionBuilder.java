@@ -30,14 +30,19 @@ public final class ToStringReflectionBuilder {
         private static final long serialVersionUID = -7977293159579371869L;
 
     {
-    	this.setArrayStart("[");
-    	this.setArrayEnd("]");
-    	this.setContentStart("(");
-    	this.setFieldSeparator(", ");
-    	this.setContentEnd(")");
-    	this.setUseShortClassName(true);
-        this.setNullText("<NULL>");
+        this.setArrayStart("[");
+        this.setArrayEnd("]");
+        this.setContentStart("(");
+        this.setFieldSeparator(", ");
+        this.setContentEnd(")");
+        this.setUseShortClassName(true);
+        this.setNullText(NULL_TEXT);
     }};
+
+    /**
+     * {@code null} textual representation.
+     */
+    public static final String NULL_TEXT = "<NULL>";
 
     /**
      * Restituisce una rappresentazione testuale,

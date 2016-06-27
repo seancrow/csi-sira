@@ -18,6 +18,7 @@ package org.geoserver.security.iride;
 
 import static org.geoserver.security.iride.util.builder.ToStringReflectionBuilder.reflectToString;
 
+import org.geoserver.security.GeoServerRoleService;
 import org.geoserver.security.GeoServerUserGroupService;
 import org.geoserver.security.config.BaseSecurityNamedServiceConfig;
 import org.geoserver.security.config.SecurityAuthProviderConfig;
@@ -40,7 +41,7 @@ public class IrideSecurityServiceConfig extends BaseSecurityNamedServiceConfig i
     private String serverURL;
 
     /**
-     * Application name requesting <code>IRIDE</code> service.
+     * Name of the application requesting <code>IRIDE</code> service.
      *
      * @todo should be set dynamically at runtime
      */
@@ -53,6 +54,12 @@ public class IrideSecurityServiceConfig extends BaseSecurityNamedServiceConfig i
     private String adminRole;
 
     /**
+     * Name of the {@link GeoServerRoleService} to rely on as a fallback
+     * when {@link IrideRoleService} does not found any roles for a given user.
+     */
+    private String fallbackRoleService;
+
+    /**
      * Constructor.
      */
     public IrideSecurityServiceConfig() {
@@ -60,8 +67,8 @@ public class IrideSecurityServiceConfig extends BaseSecurityNamedServiceConfig i
     }
 
     /**
-     * Constructor.
-     * Copy constructor receiving another {@link IrideSecurityServiceConfig} instance.
+     * Constructor. <p>
+     * Copy constructor receiving another {@link IrideSecurityServiceConfig} instance. <br />
      * Needed by <code>GeoServer</code>.
      *
      * @param other the other {@link IrideSecurityServiceConfig} instance to copy from
@@ -69,40 +76,52 @@ public class IrideSecurityServiceConfig extends BaseSecurityNamedServiceConfig i
     public IrideSecurityServiceConfig(IrideSecurityServiceConfig other) {
         super(other);
 
-        this.serverURL       = other.getServerURL();
-        this.applicationName = other.getApplicationName();
-        this.adminRole       = other.getAdminRole();
+        this.serverURL           = other.getServerURL();
+        this.applicationName     = other.getApplicationName();
+        this.adminRole           = other.getAdminRole();
+        this.fallbackRoleService = other.getFallbackRoleService();
     }
 
     /**
-     * @return the serverURL
+     * Returns the <code>IRIDE</code> server <code>URL</code>.
+     *
+     * @return the <code>IRIDE</code> server <code>URL</code>
      */
     public String getServerURL() {
         return this.serverURL;
     }
 
     /**
-     * @param serverURL the serverURL to set
+     * Set the <code>IRIDE</code> server <code>URL</code>.
+     *
+     * @param serverURL <code>IRIDE</code> server <code>URL</code>
      */
     public void setServerURL(String serverURL) {
         this.serverURL = serverURL;
     }
 
     /**
-     * @return the applicationName
+     * Returns the name of the application requesting <code>IRIDE</code> service.
+     *
+     * @return the name of the application requesting <code>IRIDE</code> service
      */
     public String getApplicationName() {
         return this.applicationName;
     }
 
     /**
-     * @param applicationName the applicationName to set
+     * Set the name of the application requesting <code>IRIDE</code> service.
+     *
+     * @param applicationName the name of the application requesting <code>IRIDE</code> service
      */
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
     }
 
     /**
+     * Returns the admin role.
+     * Used for both <code>admin role name</code> and <code>group admin role name</code>.
+     *
      * @return the adminRole
      */
     public String getAdminRole() {
@@ -110,10 +129,35 @@ public class IrideSecurityServiceConfig extends BaseSecurityNamedServiceConfig i
     }
 
     /**
-     * @param adminRole the adminRole to set
+     * Set the admin role.
+     * Used for both <code>admin role name</code> and <code>group admin role name</code>.
+     *
+     * @param adminRole the adminRole
      */
     public void setAdminRole(String adminRole) {
         this.adminRole = adminRole;
+    }
+
+    /**
+     * Returns the name of the {@link GeoServerRoleService} to rely on as a fallback
+     * when {@link IrideRoleService} does not found any roles for a given user.
+     *
+     * @return the name of the {@link GeoServerRoleService} to rely on as a fallback
+     *         when {@link IrideRoleService} does not found any roles for a given user
+     */
+    public String getFallbackRoleService() {
+        return this.fallbackRoleService;
+    }
+
+    /**
+     * Set the name of the {@link GeoServerRoleService} to rely on as a fallback
+     * when {@link IrideRoleService} does not found any roles for a given user.
+     *
+     * @param fallbackRoleService the name of the {@link GeoServerRoleService} to rely on as a fallback
+     *        when {@link IrideRoleService} does not found any roles for a given user
+     */
+    public void setFallbackRoleService(String fallbackRoleService) {
+        this.fallbackRoleService = fallbackRoleService;
     }
 
     /*
