@@ -16,7 +16,7 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.geoserver.security.iride.util.factory.httpclient;
+package org.geoserver.security.iride.util.factory.http;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.springframework.beans.factory.FactoryBean;

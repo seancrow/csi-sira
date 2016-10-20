@@ -18,7 +18,7 @@
  */
 package org.geoserver.security.iride.config;
 
-import static org.geoserver.security.iride.util.builder.ToStringReflectionBuilder.reflectToString;
+import static org.geoserver.security.iride.util.builder.util.ToStringReflectionBuilder.reflectToString;
 
 import org.geoserver.security.GeoServerRoleService;
 import org.geoserver.security.GeoServerUserGroupService;

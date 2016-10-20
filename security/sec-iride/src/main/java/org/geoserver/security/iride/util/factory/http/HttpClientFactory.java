@@ -16,7 +16,7 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.geoserver.security.iride.util.factory.httpclient;
+package org.geoserver.security.iride.util.factory.http;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
@@ -80,7 +80,7 @@ public class HttpClientFactory extends AbstractFactory<HttpClient> {
     }
 
     /* (non-Javadoc)
-     * @see org.geoserver.security.iride.util.factory.httpclient.HttpClientFactory#newHttpClient()
+     * @see org.geoserver.security.iride.util.factory.http.HttpClientFactory#newHttpClient()
      */
     /**
      * Return a new {@link HttpClient} object, using a {@link MultiThreadedHttpConnectionManager} configured as follows:

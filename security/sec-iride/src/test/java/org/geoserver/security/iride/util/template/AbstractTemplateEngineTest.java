@@ -43,6 +43,7 @@ import org.springframework.test.context.TestContextManager;
 @RunWith(Parameterized.class)
 @ContextConfiguration(locations = {
     "classpath:/testContext.xml",
+    "classpath:/testEntitiesContext.xml",
     "classpath:/templateContext.xml"
 })
 public abstract class AbstractTemplateEngineTest extends AbstractXmlUnitTest {

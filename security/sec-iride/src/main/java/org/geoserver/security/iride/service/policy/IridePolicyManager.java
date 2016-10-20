@@ -57,7 +57,7 @@ public final class IridePolicyManager {
     public IridePolicyRequestHandler getPolicyRequestHandler(IridePolicy policy) {
         final IridePolicyRequestHandler policyRequestHandler = this.policyRequestHandlers.lookup(policy);
 
-        LOGGER.fine(String.format("Request Handler for IRIDE Policy '%s' found: %b", policy.getServiceName(), policyRequestHandler != null));
+        LOGGER.finer(String.format("Request Handler for IRIDE Policy '%s' found: %b", policy.getServiceName(), policyRequestHandler != null));
 
         return policyRequestHandler;
     }

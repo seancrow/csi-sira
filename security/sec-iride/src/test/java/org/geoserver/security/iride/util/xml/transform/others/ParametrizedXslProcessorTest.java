@@ -48,7 +48,7 @@ public final class ParametrizedXslProcessorTest extends AbstractOthersXslProcess
     }
 
     @Parameters(name = "Processing {0} response")
-    public static Collection<Object[]> getTestParameters() throws IOException {
+    public static Collection<Object[]> parameters() throws IOException {
         return Arrays.asList(
             new Object[][] {
             	{ TRANSFORMATION_NAME, new HashMap<String, Object>() {

@@ -11,14 +11,11 @@
     <!-- === HttpClient === BEGIN === -->
 
     <bean id="httpClient"
-          class="org.geoserver.security.iride.util.factory.httpclient.HttpClientFactoryBean" />
+          class="test.org.geoserver.security.iride.util.factory.http.HttpClientFactoryBean" />
 
     <!-- === HttpClient ===   END === -->
 
     <!-- === FreeMarker === BEGIN === -->
-
-    <bean id="templateConfigurationFactory"
-          class="org.geoserver.security.iride.util.factory.template.freemarker.FreeMarkerConfigurationFactory" />
 
     <bean id="templateConfiguration"
           class="org.geoserver.security.iride.util.factory.template.freemarker.FreeMarkerConfigurationFactoryBean" />
@@ -60,6 +57,13 @@
 
     <!-- === HTTP Headers ===   END === -->
 
+    <!-- === HTTP POST method Builder === BEGIN === -->
+
+    <bean id="httpPostBuilder"
+          class="org.geoserver.security.iride.util.builder.http.HttpPostBuilder" />
+
+    <!-- === HTTP POST method Builder ===   END === -->
+
     <!-- === IRIDE Policies Helpers === BEGIN === -->
 
     <bean id="policyManager"
@@ -67,11 +71,11 @@
         <constructor-arg ref="policyRegistry" />
     </bean>
 
-    <bean id="abstractIridePolicyCaller"
-          abstract="true"
-          p:httpClient-ref="httpClient"
-          p:httpHeaders-ref="httpHeaders"
-          p:templateEngine-ref="templateEngine"
+    <bean id="abstractIridePolicyRequestHandler" abstract="true"
+        p:httpClient-ref="httpClient"
+        p:httpHeaders-ref="httpHeaders"
+        p:templateEngine-ref="templateEngine"
+        p:httpPostBuilder-ref="httpPostBuilder"
     />
 
     <bean id="policyRegistry"
@@ -79,44 +83,44 @@
         <constructor-arg index="0">
             <util:list value-type="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler">
                 <!-- Base Policies -->
-                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyCaller">
+                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyRequestHandler">
                     <constructor-arg><value type="org.geoserver.security.iride.service.policy.IridePolicy">FIND_RUOLI_FOR_PERSONA_IN_APPLICATION</value></constructor-arg>
                 </bean>
-                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyCaller">
+                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyRequestHandler">
                     <constructor-arg><value type="org.geoserver.security.iride.service.policy.IridePolicy">FIND_RUOLI_FOR_PERSONA_IN_USE_CASE</value></constructor-arg>
                 </bean>
-                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyCaller">
+                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyRequestHandler">
                     <constructor-arg><value type="org.geoserver.security.iride.service.policy.IridePolicy">FIND_USE_CASES_FOR_PERSONA_IN_APPLICATION</value></constructor-arg>
                 </bean>
-                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyCaller">
+                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyRequestHandler">
                     <constructor-arg><value type="org.geoserver.security.iride.service.policy.IridePolicy">IDENTIFICA_USER_PASSWORD</value></constructor-arg>
                 </bean>
-                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyCaller">
+                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyRequestHandler">
                     <constructor-arg><value type="org.geoserver.security.iride.service.policy.IridePolicy">IS_IDENTITA_AUTENTICA</value></constructor-arg>
                 </bean>
-                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyCaller">
+                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyRequestHandler">
                     <constructor-arg><value type="org.geoserver.security.iride.service.policy.IridePolicy">IS_PERSONA_AUTORIZZATA_IN_USE_CASE</value></constructor-arg>
                 </bean>
-                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyCaller">
+                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyRequestHandler">
                     <constructor-arg><value type="org.geoserver.security.iride.service.policy.IridePolicy">IS_PERSONA_IN_RUOLO</value></constructor-arg>
                 </bean>
-                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyCaller">
+                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyRequestHandler">
                     <constructor-arg><value type="org.geoserver.security.iride.service.policy.IridePolicy">GET_INFO_PERSONA_IN_USE_CASE</value></constructor-arg>
                 </bean>
-                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyCaller">
+                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyRequestHandler">
                     <constructor-arg><value type="org.geoserver.security.iride.service.policy.IridePolicy">FIND_RUOLI_FOR_PERSONA_IN_APPLICATION</value></constructor-arg>
                 </bean>
                 <!-- Helper Policies -->
-                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyCaller">
+                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyRequestHandler">
                     <constructor-arg><value type="org.geoserver.security.iride.service.policy.IridePolicy">FIND_APPLICATIONS</value></constructor-arg>
                 </bean>
-                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyCaller">
+                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyRequestHandler">
                     <constructor-arg><value type="org.geoserver.security.iride.service.policy.IridePolicy">FIND_USE_CASES_FOR_APPLICATION</value></constructor-arg>
                 </bean>
-                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyCaller">
+                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyRequestHandler">
                     <constructor-arg><value type="org.geoserver.security.iride.service.policy.IridePolicy">IS_APPLICATION_ESISTENTE</value></constructor-arg>
                 </bean>
-                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyCaller">
+                <bean class="org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler" parent="abstractIridePolicyRequestHandler">
                     <constructor-arg><value type="org.geoserver.security.iride.service.policy.IridePolicy">IS_USE_CASE_ESISTENTE</value></constructor-arg>
                 </bean>
             </util:list>

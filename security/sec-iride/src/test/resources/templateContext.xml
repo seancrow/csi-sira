@@ -42,37 +42,6 @@
        </property>
     </bean>
 
-    <bean id="application"
-          class="org.geoserver.security.iride.entity.IrideApplication">
-        <constructor-arg type="java.lang.String" value="DECSIRA" />
-    </bean>
-
-    <bean id="irideIdentity"
-          class="org.geoserver.security.iride.entity.IrideIdentity"
-          factory-method="parseIrideIdentity">
-        <constructor-arg type="java.lang.String" value="AAAAAA00B77B000F/CSI PIEMONTE/DEMO 20/IPA/20160531113948/2/1IQssTaf4vNMa66qU52m7g==" />
-    </bean>
-
-    <bean id="role"
-          class="org.geoserver.security.iride.entity.IrideRole"
-          factory-method="parseRole">
-        <constructor-arg type="java.lang.String" value="PA_GEN_DECSIRA@REG_PMN" />
-    </bean>
-
-    <bean id="useCase"
-          class="org.geoserver.security.iride.entity.IrideUseCase">
-        <constructor-arg type="org.geoserver.security.iride.entity.IrideApplication" ref="application" />
-        <constructor-arg type="java.lang.String" value="UC001" />
-    </bean>
-
-    <bean id="infoPersona"
-          class="org.geoserver.security.iride.entity.IrideInfoPersona">
-        <constructor-arg type="org.geoserver.security.iride.entity.IrideRole" ref="role" />
-        <constructor-arg type="java.util.Properties">
-            <util:properties location="classpath:infoPersona.properties" />
-        </constructor-arg>
-    </bean>
-
     <util:map id="usernameAndPassword"
               map-class="java.util.HashMap"
               key-type="java.lang.String"

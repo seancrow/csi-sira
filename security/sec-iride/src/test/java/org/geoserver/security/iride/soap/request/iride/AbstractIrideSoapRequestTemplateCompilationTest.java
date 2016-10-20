@@ -43,6 +43,7 @@ import freemarker.template.TemplateException;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
     "classpath:/testContext.xml",
+    "classpath:/testEntitiesContext.xml",
 	"classpath:/templateContext.xml"
 })
 public abstract class AbstractIrideSoapRequestTemplateCompilationTest extends AbstractXmlUnitTest {

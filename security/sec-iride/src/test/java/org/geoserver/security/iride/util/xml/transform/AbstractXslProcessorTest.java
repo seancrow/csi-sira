@@ -101,7 +101,7 @@ public abstract class AbstractXslProcessorTest extends AbstractXmlUnitTest {
      * @throws Exception
      */
     @Before
-    public final void prepareXslProcessorTest() throws Exception {
+    public final void setUp() throws Exception {
         // Preparation of test instance
         this.testContextManager.prepareTestInstance(this);
 

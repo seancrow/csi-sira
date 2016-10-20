@@ -18,23 +18,207 @@
  */
 package org.geoserver.security.iride.service.policy.handler.request;
 
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
+
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.io.IOUtils;
+import org.geoserver.security.iride.service.policy.IridePolicy;
+import org.geoserver.security.iride.service.policy.IridePolicyManager;
+import org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler;
+import org.geoserver.security.iride.util.builder.http.HttpPostBuilder;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestContextManager;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.util.ResourceUtils;
+
+import test.org.geoserver.security.iride.util.factory.util.UrlValidatorFactory;
 
 /**
+ * <code>IRIDE</code> service "policy" request handler <code>JUnit</code> Test.
  *
  * @author "Simone Cornacchia - seancrow76@gmail.com, simone.cornacchia@consulenti.csi.it (CSI:71740)"
  */
-public class IridePolicyRequestHandlerTest {
+@RunWith(Parameterized.class)
+@ContextConfiguration(locations = {
+    "classpath:/testContext.xml",
+    "classpath:/testEntitiesContext.xml",
+    "classpath:/templateContext.xml",
+})
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
+public final class IridePolicyRequestHandlerTest {
 
-    // TODO: implement me!
+    private static final String RESOURCE_LOCATION_PATTERN = "classpath:iride/soap/response/%s.xml";
+
+    private static String serverURL;
+
+    private final TestContextManager testContextManager;
+
+    /**
+     * <code>IRIDE</code> service "policy": one of the the various service callable operations.
+     */
+    private final IridePolicy policy;
+
+    private final String paramsBeanName;
+
+    private Map<String, Object> params;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    /**
+     * Manager class for <code>IRIDE</code> service "policy" handlers.
+     */
+    private IridePolicyManager policyManager;
+
+    /**
+     * Constructor.
+     *
+     * @param policy
+     */
+    public IridePolicyRequestHandlerTest(IridePolicy policy, String paramsBeanName) {
+        this.testContextManager = new TestContextManager(this.getClass());
+
+        this.policy         = policy;
+        this.paramsBeanName = paramsBeanName;
+    }
+
+    /**
+     *
+     * @return
+     * @throws IOException
+     */
+    @Parameters(name = "Handling {0} Policy request with {1} params")
+    public static Collection<Object[]> parameters() throws IOException {
+        return Arrays.asList(
+            new Object[][] {
+                { IridePolicy.FIND_RUOLI_FOR_PERSONA_IN_APPLICATION, "irideIdentityAndApplication" },
+                { IridePolicy.FIND_RUOLI_FOR_PERSONA_IN_USE_CASE, "irideIdentityAndUseCase" },
+                { IridePolicy.FIND_USE_CASES_FOR_PERSONA_IN_APPLICATION, "irideIdentityAndApplication" },
+                { IridePolicy.GET_INFO_PERSONA_IN_USE_CASE, "irideIdentityAndUseCase" },
+                { IridePolicy.IDENTIFICA_USER_PASSWORD, "usernameAndPassword" },
+                { IridePolicy.IS_IDENTITA_AUTENTICA, "irideIdentityOnly" },
+                { IridePolicy.IS_PERSONA_AUTORIZZATA_IN_USE_CASE, "irideIdentityAndUseCase" },
+                { IridePolicy.IS_PERSONA_IN_RUOLO, "irideIdentityAndRole" },
+            }
+        );
+    }
+
+    /**
+     * <code>IRIDE</code> service "policy" request handler test class preparation.
+     *
+     * @throws Exception
+     */
+    @BeforeClass
+    public static void setupClass() throws Exception {
+        serverURL = "http://localhost:8085/iride2simApplIridepepWsfad/services/iride2simIridepep";
+
+        // Preliminary test assertions
+        assertTrue(UrlValidatorFactory.createUrlValidator().isValid(serverURL));
+    }
+
+    /**
+     * <code>IRIDE</code> service "policy" request handler test preparation and setup.
+     *
+     * @throws Exception
+     */
+    @Before
+    @SuppressWarnings("unchecked")
+    public void setup() throws Exception {
+        // Preparation of test instance
+        this.testContextManager.prepareTestInstance(this);
+
+        this.policyManager = this.applicationContext.getBean("policyManager", IridePolicyManager.class);
+        this.params        = this.applicationContext.getBean(this.paramsBeanName, Map.class);
+
+        // Preliminary test assertions
+        assertThat(this.policyManager, not(nullValue()));
+        assertThat(this.params, is(not(nullValue())));
+        assertThat(this.params.entrySet(), is(not(empty())));
+    }
+
     /**
      * Test method for {@link org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler#handlePolicyRequest(java.lang.String, java.util.Map)}.
+     *
+     * @throws IOException
      */
     @Test
-    public void testCallPolicy() {
-        assertTrue(true);
+    public void test() throws IOException {
+        final IridePolicyRequestHandler handler = this.prepareHandler(this.policyManager.getPolicyRequestHandler(this.policy));
+
+        assertThat(handler, is(not(nullValue())));
+        assertThat(this.policy, is(handler.getPolicy()));
+
+        final String result = handler.handlePolicyRequest(serverURL, this.params);
+
+        assertThat(result, not(isEmptyOrNullString()));
+    }
+
+    /**
+     *
+     * @param handler
+     * @return
+     */
+    private IridePolicyRequestHandler prepareHandler(IridePolicyRequestHandler handler) {
+        final HttpPostBuilder spied = spy(handler.getHttpPostBuilder());
+
+        when(spied.build(eq(serverURL), anyString(), org.mockito.Matchers.any(Header[].class))).then(new Answer<PostMethod>() {
+
+            /*
+             * (non-Javadoc)
+             * @see org.mockito.stubbing.Answer#answer(org.mockito.invocation.InvocationOnMock)
+             */
+            @Override
+            public PostMethod answer(final InvocationOnMock invocation) throws Throwable {
+                return new PostMethod() {
+
+                    /*
+                     * (non-Javadoc)
+                     * @see org.apache.commons.httpclient.methods.PostMethod#getName()
+                     */
+                    @Override
+                    public String getName() {
+                        return "FileMethod";
+                    }
+
+                    /*
+                     * (non-Javadoc)
+                     * @see org.apache.commons.httpclient.HttpMethodBase#getResponseBodyAsString()
+                     */
+                    @Override
+                    public String getResponseBodyAsString() throws IOException {
+                        final String resourceLocation = String.format(RESOURCE_LOCATION_PATTERN, IridePolicyRequestHandlerTest.this.policy.getServiceName());
+                        try (final InputStream in = ResourceUtils.getURL(resourceLocation).openStream()) {
+                          return IOUtils.toString(in);
+                        }
+                    }
+                };
+            }
+        });
+
+        handler.setHttpPostBuilder(spied);
+
+        return handler;
     }
 
 }

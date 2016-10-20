@@ -46,7 +46,7 @@ public final class GetInfoPersonaInUseCaseTemplateEngineTest extends AbstractTem
     }
 
     @Parameters(name = "Processing {0} template, with {1} Spring Bean context")
-    public static Collection<String[]> getTestParameters() {
+    public static Collection<String[]> parameters() {
         return Arrays.asList(
             new String[][] {
             	{"getInfoPersonaInUseCase", "irideIdentityAndUseCase"},

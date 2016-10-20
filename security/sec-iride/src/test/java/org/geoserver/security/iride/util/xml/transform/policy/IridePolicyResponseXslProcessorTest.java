@@ -47,7 +47,7 @@ public final class IridePolicyResponseXslProcessorTest extends AbstractIridePoli
      * @throws IOException
      */
     @Parameters(name = "Processing {0} response")
-    public static Collection<Object[]> getTestParameters() throws IOException {
+    public static Collection<Object[]> parameters() throws IOException {
         return Arrays.asList(
             new Object[][] {
                 { IridePolicy.FIND_RUOLI_FOR_PERSONA_IN_APPLICATION, null },

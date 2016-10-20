@@ -20,7 +20,7 @@ package org.geoserver.security.iride.entity.identity;
 
 import org.geoserver.security.iride.entity.IrideIdentity;
 import org.geoserver.security.iride.entity.identity.token.IrideIdentityToken;
-import org.geoserver.security.iride.util.builder.ToStringReflectionBuilder;
+import org.geoserver.security.iride.util.builder.util.ToStringReflectionBuilder;
 
 /**
  * <code>IRIDE</code> <code>Digital Identity</code> formatter.

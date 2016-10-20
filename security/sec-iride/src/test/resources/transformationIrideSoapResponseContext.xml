@@ -17,7 +17,7 @@
     <bean id="findRuoliForPersonaInApplicationXML"
           parent="abstractSAXSourceFactory"
           class="org.geoserver.security.iride.util.factory.sax.SAXSourceFactoryBean"
-        p:resource="classpath:transformations/iride/soap/response/findRuoliForPersonaInApplication.xml"
+        p:resource="classpath:iride/soap/response/findRuoliForPersonaInApplication.xml"
     />
 
     <bean id="findRuoliForPersonaInApplicationXSL"
@@ -38,7 +38,7 @@
     <bean id="findRuoliForPersonaInUseCaseXML"
           parent="abstractSAXSourceFactory"
           class="org.geoserver.security.iride.util.factory.sax.SAXSourceFactoryBean"
-        p:resource="classpath:transformations/iride/soap/response/findRuoliForPersonaInUseCase.xml"
+        p:resource="classpath:iride/soap/response/findRuoliForPersonaInUseCase.xml"
     />
 
     <bean id="findRuoliForPersonaInUseCaseXSL"
@@ -59,7 +59,7 @@
     <bean id="findUseCasesForPersonaInApplicationXML"
           parent="abstractSAXSourceFactory"
           class="org.geoserver.security.iride.util.factory.sax.SAXSourceFactoryBean"
-        p:resource="classpath:transformations/iride/soap/response/findUseCasesForPersonaInApplication.xml"
+        p:resource="classpath:iride/soap/response/findUseCasesForPersonaInApplication.xml"
     />
 
     <bean id="findUseCasesForPersonaInApplicationXSL"
@@ -80,7 +80,7 @@
     <bean id="getInfoPersonaInUseCaseXML"
           parent="abstractSAXSourceFactory"
           class="org.geoserver.security.iride.util.factory.sax.SAXSourceFactoryBean"
-        p:resource="classpath:transformations/iride/soap/response/getInfoPersonaInUseCase.xml"
+        p:resource="classpath:iride/soap/response/getInfoPersonaInUseCase.xml"
     />
 
     <bean id="getInfoPersonaInUseCaseXSL"
@@ -101,7 +101,7 @@
     <bean id="getInfoPersonaInUseCaseReturnXML"
           parent="abstractSAXSourceFactory"
           class="org.geoserver.security.iride.util.factory.sax.SAXSourceFactoryBean"
-        p:resource="classpath:transformations/iride/soap/response/getInfoPersonaInUseCaseReturn.xml"
+        p:resource="classpath:iride/soap/response/getInfoPersonaInUseCaseReturn.xml"
     />
 
     <bean id="getInfoPersonaInUseCaseReturnXSL"
@@ -122,7 +122,7 @@
     <bean id="identificaUserPasswordXML"
           parent="abstractSAXSourceFactory"
           class="org.geoserver.security.iride.util.factory.sax.SAXSourceFactoryBean"
-        p:resource="classpath:transformations/iride/soap/response/identificaUserPassword.xml"
+        p:resource="classpath:iride/soap/response/identificaUserPassword.xml"
     />
 
     <bean id="identificaUserPasswordXSL"
@@ -143,7 +143,7 @@
     <bean id="isIdentitaAutenticaXML"
           parent="abstractSAXSourceFactory"
           class="org.geoserver.security.iride.util.factory.sax.SAXSourceFactoryBean"
-        p:resource="classpath:transformations/iride/soap/response/isIdentitaAutentica.xml"
+        p:resource="classpath:iride/soap/response/isIdentitaAutentica.xml"
     />
 
     <bean id="isIdentitaAutenticaXSL"
@@ -164,7 +164,7 @@
     <bean id="isPersonaAutorizzataInUseCaseXML"
           parent="abstractSAXSourceFactory"
           class="org.geoserver.security.iride.util.factory.sax.SAXSourceFactoryBean"
-        p:resource="classpath:transformations/iride/soap/response/isPersonaAutorizzataInUseCase.xml"
+        p:resource="classpath:iride/soap/response/isPersonaAutorizzataInUseCase.xml"
     />
 
     <bean id="isPersonaAutorizzataInUseCaseXSL"
@@ -185,7 +185,7 @@
     <bean id="isPersonaInRuoloXML"
           parent="abstractSAXSourceFactory"
           class="org.geoserver.security.iride.util.factory.sax.SAXSourceFactoryBean"
-        p:resource="classpath:transformations/iride/soap/response/isPersonaInRuolo.xml"
+        p:resource="classpath:iride/soap/response/isPersonaInRuolo.xml"
     />
 
     <bean id="isPersonaInRuoloXSL"

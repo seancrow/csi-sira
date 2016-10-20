@@ -18,7 +18,7 @@
  */
 package org.geoserver.security.iride;
 
-import static org.geoserver.security.iride.util.builder.IrideServerURLBuilder.buildServerURL;
+import static org.geoserver.security.iride.util.builder.util.IrideUrlBuilder.buildServerUrl;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -426,7 +426,7 @@ public class IrideRoleService extends AbstractGeoServerSecurityService implement
 
             final IrideSecurityServiceConfig irideCfg = (IrideSecurityServiceConfig) cfg;
 
-            this.serverURL               = buildServerURL(irideCfg.getServerURL());
+            this.serverURL               = buildServerUrl(irideCfg.getServerURL());
             this.applicationName         = validateApplicationName(irideCfg.getApplicationName());
             this.adminRole               = validateAdminRole(irideCfg.getAdminRole());
             this.fallbackRoleServiceName = StringUtils.trimToNull(irideCfg.getFallbackRoleService());

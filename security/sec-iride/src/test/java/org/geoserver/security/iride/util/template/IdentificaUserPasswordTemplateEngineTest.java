@@ -44,7 +44,7 @@ public final class IdentificaUserPasswordTemplateEngineTest extends AbstractTemp
     }
 
     @Parameters(name = "Processing {0} template, with {1} Spring Bean context")
-    public static Collection<String[]> getTestParameters() {
+    public static Collection<String[]> parameters() {
         return Arrays.asList(
             new String[][] {
                 {"identificaUserPassword", "usernameAndPassword"},

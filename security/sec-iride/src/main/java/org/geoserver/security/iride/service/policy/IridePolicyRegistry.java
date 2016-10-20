@@ -91,7 +91,7 @@ public final class IridePolicyRegistry<H extends AbstractIridePolicyHandler> {
      * @param policyCallers
      */
     public void register(H[] policyCallers) {
-        LOGGER.finer(String.format("Adding %d IRIDE Policy Callers", policyCallers.length));
+        LOGGER.finer(String.format("Adding %d IRIDE Policy Handlers", policyCallers.length));
 
         for (final H policyCaller : policyCallers) {
             this.register(policyCaller);
@@ -114,7 +114,7 @@ public final class IridePolicyRegistry<H extends AbstractIridePolicyHandler> {
     private void register(IridePolicy policy, H policyCaller) {
         this.policies.put(policy, policyCaller);
 
-        LOGGER.finer(String.format("Added Caller for IRIDE Policy '%s'", policy.getServiceName()));
+        LOGGER.finer(String.format("Added Handler for IRIDE Policy '%s'", policy.getServiceName()));
     }
 
 }

@@ -16,7 +16,7 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.geoserver.security.iride.util.factory.util;
+package test.org.geoserver.security.iride.util.factory.util;
 
 import org.apache.commons.validator.routines.UrlValidator;
 import org.geoserver.security.iride.util.factory.AbstractFactory;
@@ -47,7 +47,7 @@ public class UrlValidatorFactory extends AbstractFactory<UrlValidator> {
     protected final UrlValidator newInstance() {
         return new UrlValidator(
             new String[] {"http", "https"},
-            UrlValidator.NO_FRAGMENTS
+            UrlValidator.NO_FRAGMENTS + UrlValidator.ALLOW_LOCAL_URLS
         );
     }
 

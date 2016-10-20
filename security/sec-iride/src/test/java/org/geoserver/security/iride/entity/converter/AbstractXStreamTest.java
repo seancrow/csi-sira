@@ -38,6 +38,7 @@ import com.thoughtworks.xstream.XStream;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
     "classpath:/testContext.xml",
+    "classpath:/testEntitiesContext.xml",
     "classpath:/templateContext.xml"
 })
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })

@@ -16,17 +16,20 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.geoserver.security.iride.util.builder;
+package org.geoserver.security.iride.util.builder.util;
 
 import org.apache.commons.validator.routines.UrlValidator;
 import org.geoserver.platform.GeoServerExtensions;
+import org.geoserver.security.iride.util.builder.Builder;
 import org.geoserver.security.iride.util.factory.util.UrlValidatorFactory;
 
 /**
+ * Candidate <code>IRIDE</code> server <code>URL</code> builder utility:
+ * the <code>URL</code> is first parsed ({@link #parse(String)}) and then validated ({@link #validate(String)}).
  *
  * @author "Simone Cornacchia - seancrow76@gmail.com, simone.cornacchia@consulenti.csi.it (CSI:71740)"
  */
-public final class IrideServerURLBuilder implements Builder<String> {
+public final class IrideUrlBuilder implements Builder<String> {
 
     /**
      * Candidate <code>IRIDE</code> server <code>URL</code>.
@@ -38,7 +41,7 @@ public final class IrideServerURLBuilder implements Builder<String> {
      *
      * @param url candidate <code>IRIDE</code> server <code>URL</code>
      */
-    public IrideServerURLBuilder(String url) {
+    public IrideUrlBuilder(String url) {
         this.url = url;
     }
 
@@ -50,8 +53,8 @@ public final class IrideServerURLBuilder implements Builder<String> {
      * @return the "built" <code>IRIDE</code> server <code>URL</code>
      * @see UrlValidator#isValid(String)
      */
-    public static String buildServerURL(String url) {
-        return new IrideServerURLBuilder(url).build();
+    public static String buildServerUrl(String url) {
+        return new IrideUrlBuilder(url).build();
     }
 
     /**

@@ -11,7 +11,7 @@
     <!-- === HttpClient === BEGIN === -->
 
     <bean id="httpClient"
-          class="org.geoserver.security.iride.util.factory.httpclient.HttpClientFactoryBean" />
+          class="org.geoserver.security.iride.util.factory.http.HttpClientFactoryBean" />
 
     <!-- === HttpClient ===   END === -->
 
@@ -32,21 +32,21 @@
 
     <!-- === TemplateEngine ===   END === -->
 
-    <!-- === IrideRoleService Factory === BEGIN -->
+    <!-- === IrideRoleServiceFactory === BEGIN === -->
 
     <bean id="irideRoleServiceFactory"
           class="org.geoserver.security.iride.util.factory.security.IrideRoleServiceFactory"
           p:policyManager-ref="policyManager"
     />
 
-    <!-- === IrideRoleService Factory ===   END -->
+    <!-- === IrideRoleServiceFactory ===   END === -->
 
     <bean id="irideSecurityProvider" class="org.geoserver.security.iride.IrideSecurityProvider">
         <constructor-arg ref="geoServerSecurityManager"/>
         <constructor-arg ref="irideRoleServiceFactory"/>
     </bean>
 
-    <!-- HTTP Headers === BEGIN === -->
+    <!-- === HTTP Headers === BEGIN === -->
 
     <util:list id="httpHeaders"
                value-type="org.apache.commons.httpclient.Header">
@@ -60,7 +60,7 @@
         />
     </util:list>
 
-    <!-- HTTP Headers ===   END === -->
+    <!-- === HTTP Headers ===   END === -->
 
     <!-- === IRIDE Policies Helpers === BEGIN === -->
 
@@ -127,12 +127,38 @@
 
     <!-- === IRIDE Policies Helpers ===   END === -->
 
-    <!-- === IRIDE XStream Factory === BEGIN === -->
+    <!-- === XStream === BEGIN === -->
 
-    <bean id="irideXStreamFactory"
-          class="org.geoserver.security.iride.util.factory.xstream.XStreamFactory"
-    />
+    <!-- Converters -->
+    <bean id="applicationXsConverter" class="org.geoserver.security.iride.entity.converter.IrideApplicationConverter" />
+    <bean id="identityXsConverter" class="org.geoserver.security.iride.entity.converter.IrideIdentityConverter" />
+    <bean id="infoPersonaXsConverter" class="org.geoserver.security.iride.entity.converter.IrideInfoPersonaConverter" />
+    <bean id="roleXsConverter" class="org.geoserver.security.iride.entity.converter.IrideRoleConverter" />
+    <bean id="usecaseXsConverter" class="org.geoserver.security.iride.entity.converter.IrideUseCaseConverter" />
 
-    <!-- === IRIDE XStream Factory ===   END === -->
+    <!-- Factory -->
+    <bean id="xs"
+          class="org.geoserver.security.iride.util.factory.xstream.XStreamFactoryBean">
+        <property name="aliases">
+            <map>
+                <entry key="appId" value="org.geoserver.security.iride.entity.IrideApplication" />
+                <entry key="identity" value="org.geoserver.security.iride.entity.IrideIdentity" />
+                <entry key="infoPersona" value="org.geoserver.security.iride.entity.IrideInfoPersona" />
+                <entry key="role" value="org.geoserver.security.iride.entity.IrideRole" />
+                <entry key="useCase" value="org.geoserver.security.iride.entity.IrideUseCase" />
+            </map>
+        </property>
+        <property name="converters">
+            <list>
+                <ref bean="applicationXsConverter" />
+                <ref bean="identityXsConverter" />
+                <ref bean="infoPersonaXsConverter" />
+                <ref bean="roleXsConverter" />
+                <ref bean="usecaseXsConverter" />
+            </list>
+        </property>
+    </bean>
+
+    <!-- === XStream ===   END === -->
 
 </beans>

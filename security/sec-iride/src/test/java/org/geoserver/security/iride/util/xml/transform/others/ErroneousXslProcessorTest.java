@@ -53,7 +53,7 @@ public final class ErroneousXslProcessorTest extends AbstractOthersXslProcessorT
      * @throws IOException
      */
     @Parameters(name = "Processing {0} response")
-    public static Collection<Object[]> getTestParameters() throws IOException {
+    public static Collection<Object[]> parameters() throws IOException {
         return Arrays.asList(
             new Object[][] {
                 { "erroneousTransformation", new HashMap<String, Object>() {
