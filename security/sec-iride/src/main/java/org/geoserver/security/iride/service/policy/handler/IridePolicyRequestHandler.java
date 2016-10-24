@@ -30,7 +30,7 @@ import org.geoserver.security.iride.util.builder.http.HttpPostBuilder;
 import org.geoserver.security.iride.util.template.TemplateEngine;
 
 /**
- * <code>IRIDE</code> service "policy" request handler.
+ * <code>IRIDE</code> service "policy" <em>request</em> handler.
  *
  * @author "Simone Cornacchia - seancrow76@gmail.com, simone.cornacchia@consulenti.csi.it (CSI:71740)"
  */
@@ -52,14 +52,14 @@ public final class IridePolicyRequestHandler extends AbstractIridePolicyHandler 
     private TemplateEngine templateEngine;
 
     /**
-     * <code>HTTP</code> <code>POST</code> request builder.
+     * <code>HTTP</code> <code>POST</code> <em>request</em> builder.
      */
     private HttpPostBuilder httpPostBuilder;
 
     /**
      * Constructor.
      *
-     * @param policy <code>IRIDE</code> service "policy": the specific service operation to request
+     * @param policy <code>IRIDE</code> service "policy": the specific service operation to <em>request</em>
      */
     public IridePolicyRequestHandler(IridePolicy policy) {
         super(policy);
@@ -120,18 +120,18 @@ public final class IridePolicyRequestHandler extends AbstractIridePolicyHandler 
     }
 
     /**
-     * Get the <code>HTTP</code> <code>POST</code> request builder.
+     * Get the <code>HTTP</code> <code>POST</code> <em>request</em> builder.
      *
-     * @return the <code>HTTP</code> <code>POST</code> request builder
+     * @return the <code>HTTP</code> <code>POST</code> <em>request</em> builder
      */
     public HttpPostBuilder getHttpPostBuilder() {
         return this.httpPostBuilder;
     }
 
     /**
-     * Set the <code>HTTP</code> <code>POST</code> request builder.
+     * Set the <code>HTTP</code> <code>POST</code> <em>request</em> builder.
      *
-     * @param httpPostBuilder the <code>HTTP</code> <code>POST</code> request builder
+     * @param httpPostBuilder the <code>HTTP</code> <code>POST</code> <em>request</em> builder
      */
     public void setHttpPostBuilder(HttpPostBuilder httpPostBuilder) {
         this.httpPostBuilder = httpPostBuilder;
@@ -144,7 +144,7 @@ public final class IridePolicyRequestHandler extends AbstractIridePolicyHandler 
      * @return
      * @throws IOException
      */
-    public String handlePolicyRequest(String serverURL, Map<String, Object> params) throws IOException {
+    public String handlePolicy(String serverURL, Map<String, Object> params) throws IOException {
         final String     requestXml        = this.createPolicyRequestXml(params);
         final HttpMethod requestHttpMethod = this.createPolicyRequestMethod(requestXml, serverURL);
 

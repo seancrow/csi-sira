@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 
 import org.geoserver.security.iride.service.policy.handler.AbstractIridePolicyHandler;
 import org.geoserver.security.iride.util.logging.LoggerProvider;
+import org.geoserver.security.iride.util.object.ObjectRegistry;
 
 /**
  * Registry class for available <code>IRIDE</code> service "policy" handlers.
@@ -33,7 +34,7 @@ import org.geoserver.security.iride.util.logging.LoggerProvider;
  *
  * @param <H>
  */
-public final class IridePolicyRegistry<H extends AbstractIridePolicyHandler> {
+public final class IridePolicyRegistry<H extends AbstractIridePolicyHandler> extends ObjectRegistry<IridePolicy, H> {
 
     /**
      * Logger.
@@ -41,80 +42,60 @@ public final class IridePolicyRegistry<H extends AbstractIridePolicyHandler> {
     private static final Logger LOGGER = LoggerProvider.POLICY.getLogger();
 
     /**
-     * Registered available <code>IRIDE</code> service "policy" handler, indexed by their "policy".
-     */
-    private final Map<IridePolicy, H> policies;
-
-    /**
      * Constructor.
      */
     public IridePolicyRegistry() {
-        this.policies = Collections.synchronizedMap(
-            new EnumMap<IridePolicy, H>(IridePolicy.class)
-        );
+        super();
     }
 
     /**
      * Constructor.
      *
-     * @param policyCallers registered available <code>IRIDE</code> service "policy" handler, indexed by their "policy"
+     * @param policyHandlers <code>IRIDE</code> service "policy" handlers to register
      */
-    public IridePolicyRegistry(H[] policyCallers) {
-        this();
-
-        this.register(policyCallers);
+    public IridePolicyRegistry(H[] policyHandlers) {
+        super(policyHandlers);
     }
 
     /**
-     * Returns {@code true} if the given "policy" is contained by this registry:
-     * i.e. an <code>IRIDE</code> service "policy" handler is present for the given policy.
+     * Registers the given <code>IRIDE</code> service "policy" handlers, indexed by theirs policies.
      *
-     * @param policy
-     * @return
+     * @param policyHandlers <code>IRIDE</code> service "policy" handlers to register
      */
-    public boolean contains(IridePolicy policy) {
-        return this.policies.containsKey(policy);
+    /* (non-Javadoc)
+     * @see org.geoserver.security.iride.util.object.ObjectRegistry#register(org.geoserver.security.iride.util.object.RegistrableObject[])
+     */
+    @Override
+    protected void register(H[] policyHandlers) {
+        LOGGER.finer(String.format("Adding %d IRIDE Policy Handlers", policyHandlers.length));
+
+        super.register(policyHandlers);
     }
 
     /**
-     * Returns a <code>IRIDE</code> service "policy" handler if one iss found registered for the given policy.
+     * Registers the given <code>IRIDE</code> service "policy" handler, indexed by its policy.
      *
-     * @param policy
-     * @return
+     * @param policyHandler <code>IRIDE</code> service "policy" handler to register
      */
-    public H lookup(IridePolicy policy) {
-        return this.policies.get(policy);
+    /*
+     * (non-Javadoc)
+     * @see org.geoserver.security.iride.util.object.ObjectRegistry#register(org.geoserver.security.iride.util.object.RegistrableObject)
+     */
+    @Override
+    protected void register(H policyHandler) {
+        super.register(policyHandler);
+
+        LOGGER.finer(String.format("Added IRIDE Policy Handler '%s'", policyHandler.getObjectId().getServiceName()));
     }
 
-    /**
-     *
-     * @param policyCallers
+    /* (non-Javadoc)
+     * @see org.geoserver.security.iride.util.object.ObjectRegistry#initObjects()
      */
-    public void register(H[] policyCallers) {
-        LOGGER.finer(String.format("Adding %d IRIDE Policy Handlers", policyCallers.length));
-
-        for (final H policyCaller : policyCallers) {
-            this.register(policyCaller);
-        }
-    }
-
-    /**
-     *
-     * @param policyCaller
-     */
-    public void register(H policyCaller) {
-        this.register(policyCaller.getPolicy(), policyCaller);
-    }
-
-    /**
-     *
-     * @param policy
-     * @param policyCaller
-     */
-    private void register(IridePolicy policy, H policyCaller) {
-        this.policies.put(policy, policyCaller);
-
-        LOGGER.finer(String.format("Added Handler for IRIDE Policy '%s'", policy.getServiceName()));
+    @Override
+    protected Map<IridePolicy, H> initObjects() {
+        return Collections.synchronizedMap(
+            new EnumMap<IridePolicy, H>(IridePolicy.class)
+        );
     }
 
 }

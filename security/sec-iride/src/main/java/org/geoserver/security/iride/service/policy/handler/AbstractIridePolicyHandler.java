@@ -22,13 +22,14 @@ import java.util.logging.Logger;
 
 import org.geoserver.security.iride.service.policy.IridePolicy;
 import org.geoserver.security.iride.util.logging.LoggerProvider;
+import org.geoserver.security.iride.util.object.RegistrableObject;
 
 /**
  * Base class for <code>IRIDE</code> service "policy" handlers.
  *
  * @author "Simone Cornacchia - seancrow76@gmail.com, simone.cornacchia@consulenti.csi.it (CSI:71740)"
  */
-public abstract class AbstractIridePolicyHandler {
+public abstract class AbstractIridePolicyHandler implements RegistrableObject<IridePolicy> {
 
     /**
      * Logger.
@@ -47,6 +48,15 @@ public abstract class AbstractIridePolicyHandler {
      */
     protected AbstractIridePolicyHandler(IridePolicy policy) {
         this.policy = policy;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.geoserver.security.iride.util.object.RegistrableObject#getObjectId()
+     */
+    @Override
+    public IridePolicy getObjectId() {
+        return this.getPolicy();
     }
 
     /**
