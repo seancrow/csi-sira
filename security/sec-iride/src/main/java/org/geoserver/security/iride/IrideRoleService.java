@@ -167,7 +167,7 @@ public class IrideRoleService extends AbstractGeoServerSecurityService implement
             return roles;
         }
 
-        final String responseXml = this.policyManager.getPolicyRequestHandler(IridePolicy.FIND_RUOLI_FOR_PERSONA_IN_APPLICATION).handlePolicyRequest(
+        final String responseXml = this.policyManager.getPolicyRequestHandler(IridePolicy.FIND_RUOLI_FOR_PERSONA_IN_APPLICATION).handlePolicy(
             this.config.serverURL,
             new HashMap<String, Object>() {
 
