@@ -54,6 +54,9 @@ public abstract class AbstractTemplateEngineTest extends AbstractXmlUnitTest {
 
     private final String contextName;
 
+    /**
+     * <code>Spring</code> <a href="https://spring.io/understanding/application-context">application context</a>.
+     */
     @Autowired
     private ApplicationContext applicationContext;
 

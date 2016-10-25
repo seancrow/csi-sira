@@ -55,7 +55,7 @@ import org.springframework.util.ResourceUtils;
 import test.org.geoserver.security.iride.util.factory.util.UrlValidatorFactory;
 
 /**
- * <code>IRIDE</code> service "policy" request handler <code>JUnit</code> Test.
+ * <code>IRIDE</code> service "policy" <em>request</em>handler <code>JUnit</code> Test.
  *
  * @author "Simone Cornacchia - seancrow76@gmail.com, simone.cornacchia@consulenti.csi.it (CSI:71740)"
  */
@@ -83,6 +83,9 @@ public final class IridePolicyRequestHandlerTest {
 
     private Map<String, Object> params;
 
+    /**
+     * <code>Spring</code> <a href="https://spring.io/understanding/application-context">application context</a>.
+     */
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -125,7 +128,7 @@ public final class IridePolicyRequestHandlerTest {
     }
 
     /**
-     * <code>IRIDE</code> service "policy" request handler test class preparation.
+     * <code>IRIDE</code> service "policy" <em>request</em>handler test class preparation.
      *
      * @throws Exception
      */
@@ -138,7 +141,7 @@ public final class IridePolicyRequestHandlerTest {
     }
 
     /**
-     * <code>IRIDE</code> service "policy" request handler test preparation and setup.
+     * <code>IRIDE</code> service "policy" <em>request</em>handler test preparation and setup.
      *
      * @throws Exception
      */
@@ -164,6 +167,10 @@ public final class IridePolicyRequestHandlerTest {
      */
     @Test
     public void test() throws IOException {
+        final boolean hasHandler = this.policyManager.hasPolicyRequestHandler(this.policy);
+
+        assertTrue(hasHandler);
+
         final IridePolicyRequestHandler handler = this.prepareHandler(this.policyManager.getPolicyRequestHandler(this.policy));
 
         assertThat(handler, is(not(nullValue())));

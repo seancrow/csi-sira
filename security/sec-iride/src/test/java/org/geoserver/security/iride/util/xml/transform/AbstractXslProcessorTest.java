@@ -60,6 +60,9 @@ public abstract class AbstractXslProcessorTest extends AbstractXmlUnitTest {
 
     private String expectedResult;
 
+    /**
+     * <code>Spring</code> <a href="https://spring.io/understanding/application-context">application context</a>.
+     */
     @Autowired
     private ApplicationContext applicationContext;
 

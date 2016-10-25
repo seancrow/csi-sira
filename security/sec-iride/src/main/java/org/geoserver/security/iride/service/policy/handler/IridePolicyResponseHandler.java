@@ -22,11 +22,13 @@ import java.util.Set;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.geoserver.security.iride.service.policy.IridePolicy;
-import org.geoserver.security.iride.util.xml.transform.StringResult;
 import org.geoserver.security.iride.util.xml.transform.XmlTransformer;
 
+import com.google.common.collect.Sets;
 import com.thoughtworks.xstream.XStream;
 
 /**
@@ -97,8 +99,12 @@ public final class IridePolicyResponseHandler extends AbstractIridePolicyHandler
      * @param transformations the <a href="https://en.wikipedia.org/wiki/XSLT"><code>XML</code> transformations</a>
      *        with which to process a <code>IRIDE</code> service "policy" <em>response</em>
      */
-    public void setTransformations(Set<Source> xsls) {
-        this.transformations = xsls;
+    public void setTransformations(Set<Source> transformations) {
+        if (transformations == null) {
+            this.transformations = Sets.<Source>newLinkedHashSet();
+        }
+
+        this.transformations = transformations;
     }
 
     /**
@@ -116,6 +122,11 @@ public final class IridePolicyResponseHandler extends AbstractIridePolicyHandler
      * @param xs the <a href="http://x-stream.github.io/"><code>XStream</code></a> instance, configured for <code>IRIDE</code> entities
      */
     public void setXs(XStream xs) {
+        if (xs == null) {
+            // an XStream just to avoid NPEs with no IRIDE-specific configuration
+            xs = new XStream();
+        }
+
         this.xs = xs;
     }
 
@@ -126,9 +137,9 @@ public final class IridePolicyResponseHandler extends AbstractIridePolicyHandler
      * @throws TransformerException
      */
     public Object handlePolicy(String policyResponse) throws TransformerException {
-        final String responseMarshalledXml = this.createPolicyResponseMarshalledXml(policyResponse);
+        final String policyResponseMarshalledXml = this.createPolicyResponseMarshalledXml(policyResponse);
 
-        return this.xs.fromXML(responseMarshalledXml);
+        return this.getXs().fromXML(policyResponseMarshalledXml);
     }
 
     /**
@@ -140,18 +151,15 @@ public final class IridePolicyResponseHandler extends AbstractIridePolicyHandler
     private String createPolicyResponseMarshalledXml(String policyResponse) throws TransformerException {
         String policyResponseMarshalledXml = null;
 
-        for (final Source transformation : this.transformations) {
-            final StringResult output = XmlTransformer.newStreamResult();
-
-            this.xmlTransformer.transform(
-                transformation,
-                XmlTransformer.newStreamSource(
-                    policyResponseMarshalledXml == null
-                        ? policyResponse
-                        : policyResponseMarshalledXml
-                ),
-                output
+        for (final Source transformation : this.getTransformations()) {
+            final StreamSource source = XmlTransformer.newStreamSource(
+                policyResponseMarshalledXml == null
+                    ? policyResponse
+                    : policyResponseMarshalledXml
             );
+            final StreamResult output = XmlTransformer.newStreamResult();
+
+            this.getXmlTransformer().transform(transformation, source, output);
 
             policyResponseMarshalledXml = output.toString();
         }
