@@ -45,13 +45,13 @@ public interface PolicyEnforcerHelper {
      * @param application
      * @return
      */
-    boolean isApplicationEsistente(IrideApplication application);
+    Boolean isApplicationEsistente(IrideApplication application);
 
     /**
      *
      * @param useCase
      * @return
      */
-    boolean isUseCaseEsistente(IrideUseCase useCase);
+    Boolean isUseCaseEsistente(IrideUseCase useCase);
 
 }

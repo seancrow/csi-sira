@@ -161,7 +161,7 @@ public final class IridePolicyRequestHandlerTest {
     }
 
     /**
-     * Test method for {@link org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler#handlePolicy(java.lang.String, java.util.Map)}.
+     * Test method for {@link org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler#handleRequest(java.lang.String, java.util.Map)}.
      *
      * @throws IOException
      */
@@ -176,7 +176,7 @@ public final class IridePolicyRequestHandlerTest {
         assertThat(handler, is(not(nullValue())));
         assertThat(this.policy, is(handler.getPolicy()));
 
-        final String result = handler.handlePolicy(serverURL, this.params);
+        final String result = handler.handleRequest(serverURL, this.params);
 
         assertThat(result, not(isEmptyOrNullString()));
     }

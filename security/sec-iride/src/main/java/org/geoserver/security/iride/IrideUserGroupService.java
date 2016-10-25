@@ -30,7 +30,7 @@ import org.geoserver.security.impl.GeoServerUser;
 import org.geoserver.security.iride.util.logging.LoggerProvider;
 
 /**
- * <code>GeoServer</code> user group security service, backed by <code>CSI</code> <code>IRIDE</code> service.
+ * <code>GeoServer</code> user group security service, backed by <a href="http://www.csipiemonte.it/">CSI</a> <code>IRIDE</code> service.
  * <p><em><code>IRIDE</code> user group service is <em>read-only</em>, therefore there is no support for {@link GeoServerUserGroupStore} usage</em>
  *
  * @author "Simone Cornacchia - seancrow76@gmail.com, simone.cornacchia@consulenti.csi.it (CSI:71740)"

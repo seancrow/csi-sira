@@ -19,7 +19,7 @@
 package org.geoserver.security.iride.util.factory.security;
 
 import org.geoserver.security.iride.IrideRoleService;
-import org.geoserver.security.iride.service.policy.IridePolicyManager;
+import org.geoserver.security.iride.service.IridePolicyEnforcer;
 import org.geoserver.security.iride.util.factory.AbstractFactory;
 
 /**
@@ -30,9 +30,9 @@ import org.geoserver.security.iride.util.factory.AbstractFactory;
 public final class IrideRoleServiceFactory extends AbstractFactory<IrideRoleService> {
 
     /**
-     * {@link IridePolicyManager} istance.
+     * <code>IRIDE</code> service "policies" enforcer instance.
      */
-    private IridePolicyManager policyManager;
+    private IridePolicyEnforcer policyEnforcer;
 
     /**
      * Constructor.
@@ -44,24 +44,28 @@ public final class IrideRoleServiceFactory extends AbstractFactory<IrideRoleServ
     /**
      * Constructor.
      *
-     * @param policyManager
+     * @param policyEnforcer <code>IRIDE</code> service "policies" enforcer instance
      */
-    public IrideRoleServiceFactory(IridePolicyManager policyManager) {
-        this.policyManager = policyManager;
+    public IrideRoleServiceFactory(IridePolicyEnforcer policyEnforcer) {
+        this.policyEnforcer = policyEnforcer;
     }
 
     /**
-     * @return the policyManager
+     * Get the <code>IRIDE</code> service "policies" enforcer instance.
+     *
+     * @return the <code>IRIDE</code> service "policies" enforcer instance
      */
-    public IridePolicyManager getPolicyManager() {
-        return this.policyManager;
+    public IridePolicyEnforcer getPolicyEnforcer() {
+        return this.policyEnforcer;
     }
 
     /**
-     * @param policyManager the policyManager to set
+     * Set the <code>IRIDE</code> service "policies" enforcer instance.
+     *
+     * @param policyEnforcer the <code>IRIDE</code> service "policies" enforcer instance
      */
-    public void setPolicyManager(IridePolicyManager policyManager) {
-        this.policyManager = policyManager;
+    public void setPolicyEnforcer(IridePolicyEnforcer policyEnforcer) {
+        this.policyEnforcer = policyEnforcer;
     }
 
     /*
@@ -73,7 +77,7 @@ public final class IrideRoleServiceFactory extends AbstractFactory<IrideRoleServ
         final IrideRoleService irideRoleService = new IrideRoleService();
 
         // Set the Policy Manager
-        irideRoleService.setPolicyManager(this.policyManager);
+        irideRoleService.setPolicyEnforcer(this.policyEnforcer);
 
         return irideRoleService;
     }

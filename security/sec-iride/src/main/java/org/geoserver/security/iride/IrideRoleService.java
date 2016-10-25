@@ -18,18 +18,13 @@
  */
 package org.geoserver.security.iride;
 
-import static org.geoserver.security.iride.util.builder.util.IrideUrlBuilder.buildServerUrl;
-
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.geoserver.security.GeoServerRoleService;
@@ -41,8 +36,8 @@ import org.geoserver.security.impl.GeoServerRole;
 import org.geoserver.security.iride.config.IrideSecurityServiceConfig;
 import org.geoserver.security.iride.entity.IrideApplication;
 import org.geoserver.security.iride.entity.IrideIdentity;
-import org.geoserver.security.iride.service.policy.IridePolicy;
-import org.geoserver.security.iride.service.policy.IridePolicyManager;
+import org.geoserver.security.iride.entity.IrideRole;
+import org.geoserver.security.iride.service.IridePolicyEnforcer;
 import org.geoserver.security.iride.util.logging.LoggerProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -52,7 +47,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 
 /**
- * <code>GeoServer</code> roles security service, backed by  <code>CSI</code> <code>IRIDE</code> service.
+ * <code>GeoServer</code> roles security service, backed by <a href="http://www.csipiemonte.it/">CSI</a> <code>IRIDE</code> service.
  *
  * @author "Mauro Bartolomeoli - mauro.bartolomeoli@geo-solutions.it"
  * @author "Simone Cornacchia - seancrow76@gmail.com, simone.cornacchia@consulenti.csi.it (CSI:71740)"
@@ -65,33 +60,27 @@ public class IrideRoleService extends AbstractGeoServerSecurityService implement
     private static final Logger LOGGER = LoggerProvider.SECURITY.getLogger();
 
     /**
-     * Regular Expression to extract role's relevant informations from the
-     * <code>IRIDE</code> <code>findRuoliForPersonaInApplication</code> <code>SOAP</code> response.
-     */
-    private static final Pattern ROLE_REGEX = Pattern.compile("<codiceRuolo[^>]*?>\\s*(.*?)\\s*<\\/codiceRuolo>", Pattern.CASE_INSENSITIVE);
-
-    /**
      * {@link IrideRoleService} configuration object.
      */
     private Config config;
 
     /**
-     * {@link IridePolicyManager} istance.
+     * <code>IRIDE</code> service "policies" enforcer instance.
      */
-    private IridePolicyManager policyManager;
+    private IridePolicyEnforcer policyEnforcer;
 
     /**
-     * @return the policyManager
+     * @return the policyEnforcer
      */
-    public IridePolicyManager getPolicyManager() {
-        return this.policyManager;
+    public IridePolicyEnforcer getPolicyEnforcer() {
+        return this.policyEnforcer;
     }
 
     /**
-     * @param policyManager the policyManager to set
+     * @param policyEnforcer the policyEnforcer to set
      */
-    public void setPolicyManager(IridePolicyManager policyManager) {
-        this.policyManager = policyManager;
+    public void setPolicyEnforcer(IridePolicyEnforcer iridePolicyEnforcer) {
+        this.policyEnforcer = iridePolicyEnforcer;
     }
 
     /*
@@ -107,6 +96,8 @@ public class IrideRoleService extends AbstractGeoServerSecurityService implement
 
         this.name   = config.getName();
         this.config = new Config(config);
+
+        this.getPolicyEnforcer().initializeFromConfig(config);
     }
 
     /*
@@ -167,22 +158,12 @@ public class IrideRoleService extends AbstractGeoServerSecurityService implement
             return roles;
         }
 
-        final String responseXml = this.policyManager.getPolicyRequestHandler(IridePolicy.FIND_RUOLI_FOR_PERSONA_IN_APPLICATION).handlePolicy(
-            this.config.serverURL,
-            new HashMap<String, Object>() {
-
-                private static final long serialVersionUID = 1L;
-
-                {
-                    this.put("irideIdentity", IrideIdentity.parseIrideIdentity(username));
-                    this.put("application", new IrideApplication(IrideRoleService.this.config.applicationName));
-                }
-            }
-        ).replace("\\r", "").replace("\\n", "");
-
-        final Matcher m = ROLE_REGEX.matcher(responseXml);
-        while (m.find()) {
-            final String roleName = m.group(1);
+        final IrideRole[] irideRoles = this.getPolicyEnforcer().findRuoliForPersonaInApplication(
+            IrideIdentity.parseIrideIdentity(username),
+            new IrideApplication(this.config.applicationName)
+        );
+        for (final IrideRole irideRole : irideRoles) {
+            final String roleName = irideRole.toMnemonicRepresentation();
 
             roles.add(this.createRoleObject(roleName));
 
@@ -389,11 +370,6 @@ public class IrideRoleService extends AbstractGeoServerSecurityService implement
     private static final class Config {
 
         /**
-         * <code>IRIDE</code> server <code>URL</code>.
-         */
-        private final String serverURL;
-
-        /**
          * Application name requesting <code>IRIDE</code> service.
          *
          * @todo should be set dynamically at runtime
@@ -426,7 +402,6 @@ public class IrideRoleService extends AbstractGeoServerSecurityService implement
 
             final IrideSecurityServiceConfig irideCfg = (IrideSecurityServiceConfig) cfg;
 
-            this.serverURL               = buildServerUrl(irideCfg.getServerURL());
             this.applicationName         = validateApplicationName(irideCfg.getApplicationName());
             this.adminRole               = validateAdminRole(irideCfg.getAdminRole());
             this.fallbackRoleServiceName = StringUtils.trimToNull(irideCfg.getFallbackRoleService());

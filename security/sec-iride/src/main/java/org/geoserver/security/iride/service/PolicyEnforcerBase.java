@@ -66,7 +66,7 @@ public interface PolicyEnforcerBase {
      * @param identity
      * @return
      */
-    boolean isIdentitaAutentica(IrideIdentity identity);
+    Boolean isIdentitaAutentica(IrideIdentity identity);
 
     /**
      *
@@ -74,7 +74,7 @@ public interface PolicyEnforcerBase {
      * @param useCase
      * @return
      */
-    boolean isPersonaAutorizzataInUseCase(IrideIdentity identity, IrideUseCase useCase);
+    Boolean isPersonaAutorizzataInUseCase(IrideIdentity identity, IrideUseCase useCase);
 
     /**
      *
@@ -82,7 +82,7 @@ public interface PolicyEnforcerBase {
      * @param role
      * @return
      */
-    boolean isPersonaInRuolo(IrideIdentity identity, IrideRole role);
+    Boolean isPersonaInRuolo(IrideIdentity identity, IrideRole role);
 
     /**
      *

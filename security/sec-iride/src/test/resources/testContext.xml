@@ -41,6 +41,15 @@
 
     <!-- === IrideRoleServiceFactory ===   END === -->
 
+    <!-- === IridePolicyEnforcer === BEGIN === -->
+
+    <bean id="policyEnforcer"
+          class="org.geoserver.security.iride.service.IridePolicyEnforcer"
+          p:policyManager-ref="policyManager"
+    />
+
+    <!-- === IridePolicyEnforcer ===   END === -->
+
     <!-- === HTTP Headers === BEGIN === -->
 
     <util:list id="httpHeaders"

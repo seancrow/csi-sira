@@ -124,7 +124,7 @@ public final class IridePolicyResponseHandler extends AbstractIridePolicyHandler
     public void setXs(XStream xs) {
         if (xs == null) {
             // an XStream just to avoid NPEs with no IRIDE-specific configuration
-            xs = new XStream();
+            this.xs = new XStream();
         }
 
         this.xs = xs;
@@ -136,7 +136,7 @@ public final class IridePolicyResponseHandler extends AbstractIridePolicyHandler
      * @return
      * @throws TransformerException
      */
-    public Object handlePolicy(String policyResponse) throws TransformerException {
+    public Object handleResponse(String policyResponse) throws TransformerException {
         final String policyResponseMarshalledXml = this.createPolicyResponseMarshalledXml(policyResponse);
 
         return this.getXs().fromXML(policyResponseMarshalledXml);

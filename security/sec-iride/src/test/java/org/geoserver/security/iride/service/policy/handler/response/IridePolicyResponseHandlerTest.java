@@ -133,7 +133,7 @@ public final class IridePolicyResponseHandlerTest {
     }
 
     /**
-     * Test method for {@link org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler#handlePolicy(java.lang.String)}.
+     * Test method for {@link org.geoserver.security.iride.service.policy.handler.IridePolicyRequestHandler#handleResponse(java.lang.String)}.
      *
      * @throws IOException
      * @throws TransformerException
@@ -149,7 +149,7 @@ public final class IridePolicyResponseHandlerTest {
         assertThat(handler, is(not(nullValue())));
         assertThat(this.policy, is(handler.getPolicy()));
 
-        final Object result = handler.handlePolicy(this.getIrideResponseAsString());
+        final Object result = handler.handleResponse(this.getIrideResponseAsString());
 
         assertThat(result, not(nullValue()));
 

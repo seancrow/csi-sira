@@ -144,7 +144,7 @@ public final class IridePolicyRequestHandler extends AbstractIridePolicyHandler 
      * @return
      * @throws IOException
      */
-    public String handlePolicy(String serverURL, Map<String, Object> params) throws IOException {
+    public String handleRequest(String serverURL, Map<String, Object> params) throws IOException {
         final String     requestXml        = this.createPolicyRequestXml(params);
         final HttpMethod requestHttpMethod = this.createPolicyRequestMethod(requestXml, serverURL);
 
