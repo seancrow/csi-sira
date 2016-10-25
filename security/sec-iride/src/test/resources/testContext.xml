@@ -34,9 +34,14 @@
 
     <!-- === IrideRoleServiceFactory === BEGIN === -->
 
-    <bean id="irideRoleServiceFactory"
+    <bean id="irideRoleServiceFactoryTest"
           class="org.geoserver.security.iride.util.factory.security.IrideRoleServiceFactory"
           scope="prototype"
+    />
+
+    <bean id="irideRoleServiceFactory"
+          class="org.geoserver.security.iride.util.factory.security.IrideRoleServiceFactory"
+          p:policyEnforcer-ref="policyEnforcer"
     />
 
     <!-- === IrideRoleServiceFactory ===   END === -->

@@ -57,7 +57,7 @@ public final class IrideRoleServiceFactoryTest {
      * {@link IrideRoleService} Factory.
      */
     @Autowired
-    private IrideRoleServiceFactory irideRoleServiceFactory;
+    private IrideRoleServiceFactory irideRoleServiceFactoryTest;
 
     /**
      * <code>IRIDE</code> service "policies" enforcer instance.
@@ -70,15 +70,15 @@ public final class IrideRoleServiceFactoryTest {
      */
     @Test
     public void testSetIrideRoleServiceFactoryPolicyEnforcer() {
-        LOGGER.entering(this.getClass().getName(), "testSetIrideRoleServiceFactoryPolicyManager");
+        LOGGER.entering(this.getClass().getName(), "testSetIrideRoleServiceFactoryPolicyEnforcer");
         try {
-            assertThat(this.irideRoleServiceFactory.getPolicyEnforcer(), is(nullValue()));
+            assertThat(this.irideRoleServiceFactoryTest.getPolicyEnforcer(), is(nullValue()));
 
-            this.irideRoleServiceFactory.setPolicyEnforcer(this.policyEnforcer);
+            this.irideRoleServiceFactoryTest.setPolicyEnforcer(this.policyEnforcer);
 
-            assertThat(this.irideRoleServiceFactory.getPolicyEnforcer(), is(not(nullValue())));
+            assertThat(this.irideRoleServiceFactoryTest.getPolicyEnforcer(), is(not(nullValue())));
         } finally {
-            LOGGER.exiting(this.getClass().getName(), "testSetIrideRoleServiceFactoryPolicyManager");
+            LOGGER.exiting(this.getClass().getName(), "testSetIrideRoleServiceFactoryPolicyEnforcer");
         }
     }
 
@@ -89,9 +89,9 @@ public final class IrideRoleServiceFactoryTest {
     public void testIrideRoleServiceFactoryCreate() {
         LOGGER.entering(this.getClass().getName(), "testIrideRoleServiceFactoryCreate");
         try {
-            this.irideRoleServiceFactory.setPolicyEnforcer(this.policyEnforcer);
+            this.irideRoleServiceFactoryTest.setPolicyEnforcer(this.policyEnforcer);
 
-            final IrideRoleService irideRoleService = this.irideRoleServiceFactory.create();
+            final IrideRoleService irideRoleService = this.irideRoleServiceFactoryTest.create();
 
             assertThat(irideRoleService.getPolicyEnforcer(), is(this.policyEnforcer));
         } finally {
