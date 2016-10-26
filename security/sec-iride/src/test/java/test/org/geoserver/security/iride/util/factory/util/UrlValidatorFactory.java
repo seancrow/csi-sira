@@ -22,7 +22,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.geoserver.security.iride.util.factory.AbstractFactory;
 
 /**
- * {@link UrlValidator} <em>default</em> Factory.
+ * {@link UrlValidator} <em>test stub</em> Factory.
  *
  * @author "Simone Cornacchia - seancrow76@gmail.com, simone.cornacchia@consulenti.csi.it (CSI:71740)"
  */

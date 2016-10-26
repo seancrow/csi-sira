@@ -23,7 +23,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * <a href="http://hc.apache.org/httpclient-legacy/index.html"><code>HttpClient</code></a> Factory
+ * <a href="http://hc.apache.org/httpclient-legacy/index.html"><code>HttpClient</code></a> <em>test stub</em>Factory
  * that provides <a href="http://hc.apache.org/httpclient-legacy/index.html"><code>HttpClient</code></a> as a <code>Spring</code> bean reference.
  *
  * @author "Simone Cornacchia - seancrow76@gmail.com, simone.cornacchia@consulenti.csi.it (CSI:71740)"

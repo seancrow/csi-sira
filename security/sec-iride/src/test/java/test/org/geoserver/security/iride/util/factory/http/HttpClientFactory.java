@@ -27,7 +27,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.geoserver.security.iride.util.factory.AbstractFactory;
 
 /**
- * <a href="http://hc.apache.org/httpclient-legacy/index.html"><code>HttpClient</code></a> <em>default</em> Factory.
+ * <a href="http://hc.apache.org/httpclient-legacy/index.html"><code>HttpClient</code></a> <em>test stub</em> Factory.
  *
  * @author "Simone Cornacchia - seancrow76@gmail.com, simone.cornacchia@consulenti.csi.it (CSI:71740)"
  */
