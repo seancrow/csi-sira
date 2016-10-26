@@ -21,15 +21,15 @@
 
     <bean id="irideRoleServiceFactory"
           class="org.geoserver.security.iride.util.factory.security.IrideRoleServiceFactory"
-          p:policyEnforcer-ref="policyEnforcer"
+          p:irideService-ref="irideService"
     />
 
     <!-- === IrideRoleServiceFactory ===   END === -->
 
     <!-- === IridePolicyEnforcer === BEGIN === -->
 
-    <bean id="policyEnforcer"
-          class="org.geoserver.security.iride.service.IridePolicyEnforcer"
+    <bean id="irideService"
+          class="org.geoserver.security.iride.service.IrideServiceImpl"
           p:policyManager-ref="policyManager"
     />
 

@@ -21,8 +21,10 @@ package org.geoserver.security.iride.service;
 import static org.geoserver.security.iride.util.builder.util.IrideUrlBuilder.buildServerUrl;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.transform.TransformerException;
@@ -37,14 +39,12 @@ import org.geoserver.security.iride.service.policy.IridePolicy;
 import org.geoserver.security.iride.service.policy.IridePolicyManager;
 import org.geoserver.security.iride.util.logging.LoggerProvider;
 
-import com.google.common.collect.Maps;
-
 /**
- * <code>IRIDE</code> service "policies" enforcer implementation.
+ * <code>IRIDE</code> service implementation.
  *
  * @author "Simone Cornacchia - seancrow76@gmail.com, simone.cornacchia@consulenti.csi.it (CSI:71740)"
  */
-public final class IridePolicyEnforcer implements PolicyEnforcerBase {
+public final class IrideServiceImpl implements IrideService {
 
     /**
      * Logger.
@@ -66,12 +66,11 @@ public final class IridePolicyEnforcer implements PolicyEnforcerBase {
      */
     private IridePolicyManager policyManager;
 
-    /**
-     * Initialize from configuration object
-     *
-     * @param config
-     * @throws IOException
+    /*
+     * (non-Javadoc)
+     * @see org.geoserver.security.iride.service.IrideService#initializeFromConfig(org.geoserver.security.config.SecurityNamedServiceConfig)
      */
+    @Override
     public void initializeFromConfig(SecurityNamedServiceConfig config) throws IOException {
         if (! (config instanceof IrideSecurityServiceConfig)) {
             throw new IllegalArgumentException("Config object must be of IrideSecurityServiceConfig type");
@@ -110,7 +109,7 @@ public final class IridePolicyEnforcer implements PolicyEnforcerBase {
     public IrideRole[] findRuoliForPersonaInApplication(IrideIdentity identity, IrideApplication application) {
         final IridePolicy policy = IridePolicy.FIND_RUOLI_FOR_PERSONA_IN_APPLICATION;
 
-        final Map<String, Object> params = Maps.newHashMap();
+        final Map<String, Object> params = new HashMap<>();
         params.put("irideIdentity", identity);
         params.put("application", application);
 
@@ -122,7 +121,7 @@ public final class IridePolicyEnforcer implements PolicyEnforcerBase {
 
             return policyResult.toArray(new IrideRole[policyResult.size()]);
         } catch (IOException | TransformerException e) {
-            LOGGER.severe(String.format(ERROR_MESSAGE_FORMAT, policy.getServiceName(), e.getMessage()));
+            LOGGER.log(Level.SEVERE, String.format(ERROR_MESSAGE_FORMAT, policy.getServiceName(), e.getMessage()), e);
 
             return null;
         }
@@ -209,12 +208,6 @@ public final class IridePolicyEnforcer implements PolicyEnforcerBase {
     }
 
     // === PolicyEnforcerBase interface ===   END =============================
-
-    // === PolicyEnforcerHelper interface === BEGIN ===========================
-
-    // not implemented not needed
-
-    // === PolicyEnforcerHelper interface ===   END ===========================
 
     /**
      *

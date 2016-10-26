@@ -22,8 +22,8 @@ import static org.geoserver.security.iride.util.Constants.LOGGER_BASE_NAME;
 
 import java.util.logging.Logger;
 
-import org.geoserver.security.iride.service.PolicyEnforcerBase;
-import org.geoserver.security.iride.service.PolicyEnforcerHelper;
+import org.geoserver.security.iride.service.api.PolicyEnforcerBase;
+import org.geoserver.security.iride.service.api.PolicyEnforcerHelper;
 import org.geotools.util.logging.Logging;
 
 /**

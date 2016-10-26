@@ -18,40 +18,26 @@
  */
 package org.geoserver.security.iride.service;
 
-import org.geoserver.security.iride.entity.IrideApplication;
-import org.geoserver.security.iride.entity.IrideUseCase;
+import java.io.IOException;
+
+import org.geoserver.security.config.SecurityNamedServiceConfig;
+import org.geoserver.security.iride.service.api.PolicyEnforcerBase;
 
 /**
+ * <code>IRIDE</code> service interface.
+ * <p>This interface act as a facade to the needed <code>IRIDE</code> "policies" enforcer interfaces,
+ * adding integration to GeoServer Security Provider.
  *
  * @author "Simone Cornacchia - seancrow76@gmail.com, simone.cornacchia@consulenti.csi.it (CSI:71740)"
  */
-public interface PolicyEnforcerHelper {
+public interface IrideService extends PolicyEnforcerBase {
 
     /**
+     * Initialize from configuration object
      *
-     * @return
+     * @param config
+     * @throws IOException
      */
-    IrideApplication[] findApplications();
-
-    /**
-     *
-     * @param application
-     * @return
-     */
-    IrideUseCase[] findUseCasesForApplication(IrideApplication application);
-
-    /**
-     *
-     * @param application
-     * @return
-     */
-    Boolean isApplicationEsistente(IrideApplication application);
-
-    /**
-     *
-     * @param useCase
-     * @return
-     */
-    Boolean isUseCaseEsistente(IrideUseCase useCase);
+    void initializeFromConfig(SecurityNamedServiceConfig config) throws IOException;
 
 }
