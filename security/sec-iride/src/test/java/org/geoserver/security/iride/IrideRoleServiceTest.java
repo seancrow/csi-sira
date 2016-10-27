@@ -63,6 +63,11 @@ public final class IrideRoleServiceTest {
 
     private static final String SAMPLE_USER_WITH_NO_ROLES = "AAAAAA00A11M000U/CSI PIEMONTE/DEMO 32/IPA/20161027103359/2/uQ4hHIMEEruA6DGThS3EuA==";
 
+    /**
+     * A "dummy" {@link GeoServerRole}.
+     */
+    private static final GeoServerRole DUMMY_ROLE = new GeoServerRole("dummy");
+
     private File tempFolder;
 
     @Autowired
@@ -141,6 +146,28 @@ public final class IrideRoleServiceTest {
             assertThat(roles.size(), is(0));
         } finally {
             LOGGER.exiting(this.getClass().getName(), "testGetRolesForSampleUserWithNoRoles");
+        }
+    }
+
+    /**
+     * Test method for {@link org.geoserver.security.iride.IrideRoleService#getRolesForUser(java.lang.String)}.
+     *
+     * @throws IOException
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetRolesForSampleUserNotModifiable() throws IOException {
+        LOGGER.entering(this.getClass().getName(), "testGetRolesForSampleUserNotModifiable", new Object[] {SAMPLE_USER_WITH_NO_ROLES, this.config});
+
+        try {
+            final SortedSet<GeoServerRole> roles = this.createRoleService().getRolesForUser(SAMPLE_USER_WITH_NO_ROLES);
+
+            assertThat(roles, not(nullValue()));
+            assertThat(roles.size(), is(0));
+
+            // throws UnsupportedOperationException
+            roles.add(DUMMY_ROLE);
+        } finally {
+            LOGGER.exiting(this.getClass().getName(), "testGetRolesForSampleUserNotModifiable");
         }
     }
 
