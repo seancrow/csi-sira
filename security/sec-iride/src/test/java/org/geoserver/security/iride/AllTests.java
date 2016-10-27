@@ -33,7 +33,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-//    IrideRoleServiceTest.class,
+    IrideRoleServiceTest.class,
     IrideIdentityValidityTest.class,
     IrideRoleServiceFactoryTest.class,
     FreeMarkerConfigurationDefaultFactoryTest.class,

@@ -90,6 +90,7 @@ public class IrideSecurityProvider extends GeoServerSecurityProvider {
     @Override
     public GeoServerRoleService createRoleService(SecurityNamedServiceConfig config) throws IOException {
         final IrideRoleService service = this.irideRoleServiceFactory.create();
+        service.setSecurityManager(this.securityManager);
         service.initializeFromConfig(config);
 
         return service;
@@ -111,6 +112,7 @@ public class IrideSecurityProvider extends GeoServerSecurityProvider {
     @Override
     public GeoServerUserGroupService createUserGroupService(SecurityNamedServiceConfig config) throws IOException {
         final IrideUserGroupService service = new IrideUserGroupService();
+        service.setSecurityManager(this.securityManager);
         service.initializeFromConfig(config);
 
         return service;

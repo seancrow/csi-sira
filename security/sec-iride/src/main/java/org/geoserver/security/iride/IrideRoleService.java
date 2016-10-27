@@ -143,22 +143,18 @@ public class IrideRoleService extends AbstractGeoServerSecurityService implement
      */
     @Override
     public SortedSet<GeoServerRole> getRolesForUser(final String username) throws IOException {
-        LOGGER.info("Username: " + username);
+        LOGGER.info("User: " + username);
 
         final TreeSet<GeoServerRole> roles = new TreeSet<>();
 
-        final IrideIdentity identity = IrideIdentity.parseIrideIdentity(username);
-        if (identity != null) {
+        final IrideIdentity irideIdentity = IrideIdentity.parseIrideIdentity(username);
+        if (irideIdentity != null) {
             final IrideRole[] irideRoles = this.getIrideService().findRuoliForPersonaInApplication(
-                identity,
+                irideIdentity,
                 new IrideApplication(this.config.applicationName)
             );
             for (final IrideRole irideRole : irideRoles) {
-                final String roleName = irideRole.toMnemonicRepresentation();
-
-                roles.add(this.createRoleObject(roleName));
-
-                LOGGER.info("Added role " + roleName + " from IRIDE to " + username);
+                roles.add(this.createRoleObject(irideRole.toMnemonicRepresentation()));
             }
         }
 
@@ -167,11 +163,16 @@ public class IrideRoleService extends AbstractGeoServerSecurityService implement
             LOGGER.info("No IRIDE roles available for the given user " + username + ": falling back to RoleService '" + this.config.fallbackRoleServiceName + "'");
 
             final GeoServerRoleService fallbackRoleService = this.getSecurityManager().loadRoleService(this.config.fallbackRoleServiceName);
-
-            roles.addAll(fallbackRoleService.getRolesForUser(username));
+            if (fallbackRoleService != null) {
+                roles.addAll(fallbackRoleService.getRolesForUser(username));
+            } else {
+                LOGGER.warning("A fallback RoleService '" + this.config.fallbackRoleServiceName + "' was specified, but none was found!");
+            }
         }
 
-        return roles;
+        LOGGER.info("Added " + roles.size() + " roles for User " + username);
+
+        return ImmutableSortedSet.copyOf(roles);
     }
 
     /*
@@ -275,26 +276,31 @@ public class IrideRoleService extends AbstractGeoServerSecurityService implement
      */
     @Override
     public GeoServerRole getAdminRole() {
+        // TODO: temp code!
         String username = null;
         final SecurityContext context = SecurityContextHolder.getContext();
         final Authentication authentication = context.getAuthentication();
         if (authentication != null) {
             username = String.valueOf(authentication.getPrincipal());
         }
+        // ~
 
         LOGGER.info("AdminRole Username: " + username);
 
-        GeoServerRole role;
+        GeoServerRole role = null;
         try {
             // Check username format: it may be an Identita Digitale IRIDE, or not
             if (IrideIdentity.isNotValidIrideIdentity(username) && this.config.hasFallbackRoleServiceName()) {
                 LOGGER.info("Username " + username + " is not a valid IRIDE Identity: falling back to RoleService '" + this.config.fallbackRoleServiceName + "'");
 
                 final GeoServerRoleService fallbackRoleService = this.getSecurityManager().loadRoleService(this.config.fallbackRoleServiceName);
+                if (fallbackRoleService != null) {
+                    role = fallbackRoleService.getAdminRole();
 
-                role = fallbackRoleService.getAdminRole();
-
-                LOGGER.info("Role: " + role.getAuthority());
+                    LOGGER.info("Role: " + role.getAuthority());
+                } else {
+                    LOGGER.warning("A fallback RoleService '" + this.config.fallbackRoleServiceName + "' was specified, but none was found!");
+                }
             } else {
                 role = this.createRoleObject(this.config.adminRole);
             }

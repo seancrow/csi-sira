@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.lang.StringUtils;
 import org.geoserver.security.config.SecurityNamedServiceConfig;
 import org.geoserver.security.iride.config.IrideSecurityServiceConfig;
 import org.geoserver.security.iride.entity.IrideApplication;
@@ -107,6 +108,8 @@ public final class IrideServiceImpl implements IrideService {
      */
     @Override
     public IrideRole[] findRuoliForPersonaInApplication(IrideIdentity identity, IrideApplication application) {
+        IrideRole[] result = new IrideRole[0];
+
         final IridePolicy policy = IridePolicy.FIND_RUOLI_FOR_PERSONA_IN_APPLICATION;
 
         final Map<String, Object> params = new HashMap<>();
@@ -115,16 +118,17 @@ public final class IrideServiceImpl implements IrideService {
 
         try {
             final String policyResponse = this.handleRequest(policy, this.serverURL, params);
+            if (StringUtils.isNotBlank(policyResponse)) {
+                @SuppressWarnings("unchecked")
+                final List<IrideRole> policyResult = (List<IrideRole>) this.handleResponse(policy, policyResponse);
 
-            @SuppressWarnings("unchecked")
-            final List<IrideRole> policyResult = (List<IrideRole>) this.handleResponse(policy, policyResponse);
-
-            return policyResult.toArray(new IrideRole[policyResult.size()]);
+                result = policyResult.toArray(new IrideRole[policyResult.size()]);
+            }
         } catch (IOException | TransformerException e) {
             LOGGER.log(Level.SEVERE, String.format(ERROR_MESSAGE_FORMAT, policy.getServiceName(), e.getMessage()), e);
-
-            return null;
         }
+
+        return result;
     }
 
     /*

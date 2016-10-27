@@ -29,7 +29,7 @@ import org.geoserver.security.iride.util.logging.LoggerProvider;
  *
  * @author "Simone Cornacchia - seancrow76@gmail.com, simone.cornacchia@consulenti.csi.it (CSI:71740)"
  */
-public final class IridePolicyManager {
+public class IridePolicyManager {
 
     /**
      * Logger.

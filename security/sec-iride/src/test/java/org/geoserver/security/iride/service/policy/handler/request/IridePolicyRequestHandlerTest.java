@@ -134,7 +134,7 @@ public final class IridePolicyRequestHandlerTest {
      */
     @BeforeClass
     public static void setupClass() throws Exception {
-        serverURL = "http://localhost:8085/iride2simApplIridepepWsfad/services/iride2simIridepep";
+        serverURL = "http://local-applogic-nmsf2e.csi.it/pep_wsfad_nmsf_policy/services/PolicyEnforcerBase";
 
         // Preliminary test assertions
         assertTrue(UrlValidatorFactory.createUrlValidator().isValid(serverURL));

@@ -1,0 +1,20 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <soapenv:Body>
+      <ns1:findRuoliForPersonaInApplicationResponse soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns1="http://interfaces.policy.iride2.csi.it">
+         <findRuoliForPersonaInApplicationReturn xsi:type="soapenc:Array" soapenc:arrayType="ns2:Ruolo[2]" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns2="urn:PolicyEnforcerBase">
+            <item href="#id0"/>
+            <item href="#id1"/>
+         </findRuoliForPersonaInApplicationReturn>
+      </ns1:findRuoliForPersonaInApplicationResponse>
+      <multiRef id="id1" soapenc:root="0" soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xsi:type="ns3:Ruolo" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns3="urn:PolicyEnforcerBase">
+         <codiceRuolo xsi:type="xsd:string">PA_SPEC_CONS_DECSIRA</codiceRuolo>
+         <mnemonico xsi:type="xsd:string">PA_SPEC_CONS_DECSIRA@REG_PMN</mnemonico>
+         <codiceDominio xsi:type="xsd:string">REG_PMN</codiceDominio>
+      </multiRef>
+      <multiRef id="id0" soapenc:root="0" soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xsi:type="ns4:Ruolo" xmlns:ns4="urn:PolicyEnforcerBase" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+         <codiceRuolo xsi:type="xsd:string">PA_SPEC_DECSIRA</codiceRuolo>
+         <mnemonico xsi:type="xsd:string">PA_SPEC_DECSIRA@REG_PMN</mnemonico>
+         <codiceDominio xsi:type="xsd:string">REG_PMN</codiceDominio>
+      </multiRef>
+   </soapenv:Body>
+</soapenv:Envelope>
