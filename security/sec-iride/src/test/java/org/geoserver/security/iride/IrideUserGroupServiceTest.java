@@ -30,6 +30,7 @@ import org.geoserver.platform.GeoServerResourceLoader;
 import org.geoserver.security.GeoServerSecurityManager;
 import org.geoserver.security.impl.GeoServerUser;
 import org.geoserver.security.iride.config.IrideSecurityServiceConfig;
+import org.geoserver.security.iride.util.factory.security.IrideRoleServiceFactory;
 import org.geoserver.security.iride.util.factory.security.IrideUserGroupServiceFactory;
 import org.geotools.util.logging.Logging;
 import org.junit.After;
@@ -67,6 +68,12 @@ public final class IrideUserGroupServiceTest {
      * Factory that creates a new, configured, {@link IrideRoleService} instance.
      */
     @Autowired
+    private IrideRoleServiceFactory irideRoleServiceFactory;
+
+    /**
+     * Factory that creates a new, configured, {@link IrideRoleService} instance.
+     */
+    @Autowired
     private IrideUserGroupServiceFactory irideUserGroupServiceFactory;
 
     private IrideSecurityProvider securityProvider;
@@ -89,7 +96,7 @@ public final class IrideUserGroupServiceTest {
                 )
             )
         );
-        this.securityProvider = new IrideSecurityProvider(null, this.irideUserGroupServiceFactory);
+        this.securityProvider = new IrideSecurityProvider(this.irideRoleServiceFactory, this.irideUserGroupServiceFactory);
 
         this.config = new IrideSecurityServiceConfig();
         this.config.setName("iride");
@@ -111,11 +118,63 @@ public final class IrideUserGroupServiceTest {
     // TODO: implement other tests
 
     /**
-     * Test method for {@link org.geoserver.security.iride.IrideUserGroupService#getUserByUsername(String)}.
+     * Test method for {@link org.geoserver.security.iride.IrideUserGroupService#canCreateStore()}.
      *
      * @throws IOException
      */
     @Test
+    public void testCannotCreateStore() throws IOException {
+        LOGGER.entering(this.getClass().getName(), "testCannotCreateStore");
+
+        assertThat(false, is(this.createUserGroupService().canCreateStore()));
+
+        LOGGER.exiting(this.getClass().getName(), "testCannotCreateStore");
+    }
+
+    /**
+     * Test method for {@link org.geoserver.security.iride.IrideUserGroupService#canCreateStore()}.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testCreateStoreReturnsNull() throws IOException {
+        LOGGER.entering(this.getClass().getName(), "testCreateStoreReturnsNull");
+
+        assertThat(this.createUserGroupService().createStore(), is(nullValue()));
+
+        LOGGER.exiting(this.getClass().getName(), "testCreateStoreReturnsNull");
+    }
+
+    /**
+     * Test method for {@link org.geoserver.security.iride.IrideUserGroupService#createGroupObject(String, boolean)}.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testCreateUserObjectSpecializedForIride() throws IOException {
+        LOGGER.entering(this.getClass().getName(), "testCreateUserObjectSpecializedForIride");
+
+        final String password = "xyz";
+        final boolean isEnabled = true;
+
+        final GeoServerUser user = this.createUserGroupService().createUserObject(SAMPLE_USER_WITH_NO_ROLES, password, isEnabled);
+
+        LOGGER.info("User: " + user);
+
+        assertThat(user, instanceOf(IrideGeoServerUser.class));
+        assertThat(user.getUsername(), is(SAMPLE_USER_WITH_NO_ROLES));
+        assertThat(user.getPassword(), is(password));
+        assertThat(user.isEnabled(), is(isEnabled));
+
+        LOGGER.exiting(this.getClass().getName(), "testCreateUserObjectSpecializedForIride");
+    }
+
+    /**
+     * Test method for {@link org.geoserver.security.iride.IrideUserGroupService#getUserByUsername(String)}.
+     *
+     * @throws IOException
+     */
+    @Test(expected = IllegalArgumentException.class)
     public void testGetUserByUsernameForSampleUserWithInvalidServerURL() throws IOException {
         LOGGER.entering(this.getClass().getName(), "testGetUserByUsernameForSampleUserWithInvalidServerURL", new Object[] {SAMPLE_USER_WITH_NO_ROLES, this.config});
 

@@ -20,6 +20,7 @@ package org.geoserver.security.iride.service.api;
 
 import org.geoserver.security.iride.entity.IrideApplication;
 import org.geoserver.security.iride.entity.IrideIdentity;
+import org.geoserver.security.iride.entity.IrideInfoPersona;
 import org.geoserver.security.iride.entity.IrideRole;
 import org.geoserver.security.iride.entity.IrideUseCase;
 
@@ -90,7 +91,7 @@ public interface PolicyEnforcerBase {
      * @param useCase
      * @return
      */
-    String getInfoPersonaInUseCase(IrideIdentity identity, IrideUseCase useCase);
+    IrideInfoPersona getInfoPersonaInUseCase(IrideIdentity identity, IrideUseCase useCase);
 
     /**
      *

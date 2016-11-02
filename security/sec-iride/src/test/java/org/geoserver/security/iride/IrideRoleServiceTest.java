@@ -32,6 +32,7 @@ import org.geoserver.security.GeoServerSecurityManager;
 import org.geoserver.security.impl.GeoServerRole;
 import org.geoserver.security.iride.config.IrideSecurityServiceConfig;
 import org.geoserver.security.iride.util.factory.security.IrideRoleServiceFactory;
+import org.geoserver.security.iride.util.factory.security.IrideUserGroupServiceFactory;
 import org.geotools.util.logging.Logging;
 import org.junit.After;
 import org.junit.Before;
@@ -75,6 +76,12 @@ public final class IrideRoleServiceTest {
     @Autowired
     private IrideRoleServiceFactory irideRoleServiceFactory;
 
+    /**
+     * Factory that creates a new, configured, {@link IrideRoleService} instance.
+     */
+    @Autowired
+    private IrideUserGroupServiceFactory irideUserGroupServiceFactory;
+
     private IrideSecurityProvider securityProvider;
 
     private IrideSecurityServiceConfig config;
@@ -95,7 +102,7 @@ public final class IrideRoleServiceTest {
                 )
             )
         );
-        this.securityProvider = new IrideSecurityProvider(this.irideRoleServiceFactory, null);
+        this.securityProvider = new IrideSecurityProvider(this.irideRoleServiceFactory, this.irideUserGroupServiceFactory);
 
         this.config = new IrideSecurityServiceConfig();
         this.config.setName("iride");
@@ -112,6 +119,34 @@ public final class IrideRoleServiceTest {
     @After
     public void tearDown() throws Exception {
         this.tempFolder.delete();
+    }
+
+    /**
+     * Test method for {@link org.geoserver.security.iride.IrideRoleService#canCreateStore()}.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testCannotCreateStore() throws IOException {
+        LOGGER.entering(this.getClass().getName(), "testCannotCreateStore");
+
+        assertThat(false, is(this.createRoleService().canCreateStore()));
+
+        LOGGER.exiting(this.getClass().getName(), "testCannotCreateStore");
+    }
+
+    /**
+     * Test method for {@link org.geoserver.security.iride.IrideRoleService#canCreateStore()}.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testCreateStoreReturnsNull() throws IOException {
+        LOGGER.entering(this.getClass().getName(), "testCreateStoreReturnsNull");
+
+        assertThat(this.createRoleService().createStore(), is(nullValue()));
+
+        LOGGER.exiting(this.getClass().getName(), "testCreateStoreReturnsNull");
     }
 
     /**

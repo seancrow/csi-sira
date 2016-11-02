@@ -31,6 +31,8 @@ import org.geoserver.security.iride.util.factory.security.IrideRoleServiceFactor
 import org.geoserver.security.iride.util.factory.security.IrideUserGroupServiceFactory;
 import org.geoserver.security.iride.util.logging.LoggerProvider;
 
+import com.google.common.base.Preconditions;
+
 /**
  * <code>IRIDE</code> {@link GeoServerSecurityProvider}.
  *
@@ -59,10 +61,11 @@ public class IrideSecurityProvider extends GeoServerSecurityProvider {
      *
      * @param irideRoleServiceFactory Factory that creates a new, configured, {@link IrideRoleService} instance
      * @param irideUserGroupServiceFactory Factory that creates a new, configured, {@link IrideUserGroupService} instance.
+     * @throws NullPointerException if any one of the two factories is {@code null}
      */
     public IrideSecurityProvider(IrideRoleServiceFactory irideRoleServiceFactory, IrideUserGroupServiceFactory irideUserGroupServiceFactory) {
-        this.irideRoleServiceFactory = irideRoleServiceFactory;
-        this.irideUserGroupServiceFactory = irideUserGroupServiceFactory;
+        this.irideRoleServiceFactory      = Preconditions.checkNotNull(irideRoleServiceFactory);
+        this.irideUserGroupServiceFactory = Preconditions.checkNotNull(irideUserGroupServiceFactory);
     }
 
     /*

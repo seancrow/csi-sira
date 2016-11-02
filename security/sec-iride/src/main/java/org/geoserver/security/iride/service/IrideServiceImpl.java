@@ -34,6 +34,7 @@ import org.geoserver.security.config.SecurityNamedServiceConfig;
 import org.geoserver.security.iride.config.IrideSecurityServiceConfig;
 import org.geoserver.security.iride.entity.IrideApplication;
 import org.geoserver.security.iride.entity.IrideIdentity;
+import org.geoserver.security.iride.entity.IrideInfoPersona;
 import org.geoserver.security.iride.entity.IrideRole;
 import org.geoserver.security.iride.entity.IrideUseCase;
 import org.geoserver.security.iride.service.policy.IridePolicy;
@@ -51,6 +52,21 @@ public final class IrideServiceImpl implements IrideService {
      * Logger.
      */
     private static final Logger LOGGER = LoggerProvider.POLICY.getLogger();
+
+    /**
+     * {@link IrideApplication} <code>IRIDE</code> policy request parameter.
+     */
+    private static final String IRIDE_APPLICATION_PARAM = "application";
+
+    /**
+     * {@link IrideIdentity} <code>IRIDE</code> policy request parameter.
+     */
+    private static final String IRIDE_IDENTITY_PARAM = "irideIdentity";
+
+    /**
+     * {@link IrideUseCase} <code>IRIDE</code> policy request parameter.
+     */
+    private static final String IRIDE_USECASE_PARAM = "useCase";
 
     /**
      * Policy execution error message format.
@@ -113,8 +129,8 @@ public final class IrideServiceImpl implements IrideService {
         final IridePolicy policy = IridePolicy.FIND_RUOLI_FOR_PERSONA_IN_APPLICATION;
 
         final Map<String, Object> params = new HashMap<>();
-        params.put("irideIdentity", identity);
-        params.put("application", application);
+        params.put(IRIDE_IDENTITY_PARAM, identity);
+        params.put(IRIDE_APPLICATION_PARAM, application);
 
         try {
             final String policyResponse = this.handleRequest(policy, this.serverURL, params);
@@ -138,7 +154,7 @@ public final class IrideServiceImpl implements IrideService {
     @Override
     public IrideRole[] findRuoliForPersonaInUseCase(IrideIdentity identity, IrideUseCase useCase) {
         // TODO: implement...
-        return null;
+        return new IrideRole[0];
     }
 
     /*
@@ -147,8 +163,27 @@ public final class IrideServiceImpl implements IrideService {
      */
     @Override
     public IrideUseCase[] findUseCasesForPersonaInApplication(IrideIdentity identity, IrideApplication application) {
-        // TODO: implement...
-        return null;
+        IrideUseCase[] result = new IrideUseCase[0];
+
+        final IridePolicy policy = IridePolicy.FIND_USE_CASES_FOR_PERSONA_IN_APPLICATION;
+
+        final Map<String, Object> params = new HashMap<>();
+        params.put(IRIDE_IDENTITY_PARAM, identity);
+        params.put(IRIDE_APPLICATION_PARAM, application);
+
+        try {
+            final String policyResponse = this.handleRequest(policy, this.serverURL, params);
+            if (StringUtils.isNotBlank(policyResponse)) {
+                @SuppressWarnings("unchecked")
+                final List<IrideUseCase> policyResult = (List<IrideUseCase>) this.handleResponse(policy, policyResponse);
+
+                result = policyResult.toArray(new IrideUseCase[policyResult.size()]);
+            }
+        } catch (IOException | TransformerException e) {
+            LOGGER.log(Level.SEVERE, String.format(ERROR_MESSAGE_FORMAT, policy.getServiceName(), e.getMessage()), e);
+        }
+
+        return result;
     }
 
     /*
@@ -196,9 +231,25 @@ public final class IrideServiceImpl implements IrideService {
      * @see org.geoserver.security.iride.policy.PolicyEnforcerBase#getInfoPersonaInUseCase(org.geoserver.security.iride.entity.IrideIdentity, it.csi.iride2.policy.entity.UseCase)
      */
     @Override
-    public String getInfoPersonaInUseCase(IrideIdentity identity, IrideUseCase useCase) {
-        // TODO: implement...
-        return null;
+    public IrideInfoPersona getInfoPersonaInUseCase(IrideIdentity identity, IrideUseCase useCase) {
+        IrideInfoPersona result = null;
+
+        final IridePolicy policy = IridePolicy.GET_INFO_PERSONA_IN_USE_CASE;
+
+        final Map<String, Object> params = new HashMap<>();
+        params.put(IRIDE_IDENTITY_PARAM, identity);
+        params.put(IRIDE_USECASE_PARAM, useCase);
+
+        try {
+            final String policyResponse = this.handleRequest(policy, this.serverURL, params);
+            if (StringUtils.isNotBlank(policyResponse)) {
+                result = (IrideInfoPersona) this.handleResponse(policy, policyResponse);
+            }
+        } catch (IOException | TransformerException e) {
+            LOGGER.log(Level.SEVERE, String.format(ERROR_MESSAGE_FORMAT, policy.getServiceName(), e.getMessage()), e);
+        }
+
+        return result;
     }
 
     /*

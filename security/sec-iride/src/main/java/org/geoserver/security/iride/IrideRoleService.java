@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.geoserver.security.GeoServerRoleService;
 import org.geoserver.security.GeoServerRoleStore;
+import org.geoserver.security.GeoServerUserGroupStore;
 import org.geoserver.security.config.SecurityNamedServiceConfig;
 import org.geoserver.security.event.RoleLoadedListener;
 import org.geoserver.security.impl.AbstractGeoServerSecurityService;
@@ -43,11 +44,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 
 /**
  * <code>GeoServer</code> roles security service, backed by <a href="http://www.csipiemonte.it/">CSI</a> <code>IRIDE</code> service.
+ * <p><code>IRIDE</code> roles security service is <em>read-only</em>, therefore <em>there is no support for {@link GeoServerUserGroupStore} usage</em>:
+ * {@link #canCreateStore()} will return {@code false} and {@link #createStore()} will return {@code null}.
  *
  * @author "Mauro Bartolomeoli - mauro.bartolomeoli@geo-solutions.it"
  * @author "Simone Cornacchia - seancrow76@gmail.com, simone.cornacchia@consulenti.csi.it (CSI:71740)"
@@ -98,15 +102,6 @@ public class IrideRoleService extends AbstractGeoServerSecurityService implement
         this.config = new Config(config);
 
         this.getIrideService().initializeFromConfig(config);
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.geoserver.security.impl.AbstractGeoServerSecurityService#canCreateStore()
-     */
-    @Override
-    public boolean canCreateStore() {
-        return false;
     }
 
     /*
@@ -362,9 +357,9 @@ public class IrideRoleService extends AbstractGeoServerSecurityService implement
     }
 
     /**
+     * {@link IrideRoleService} configuration.
      *
      * @author "Simone Cornacchia - seancrow76@gmail.com, simone.cornacchia@consulenti.csi.it (CSI:71740)"
-     *
      */
     private static final class Config {
 
@@ -393,6 +388,9 @@ public class IrideRoleService extends AbstractGeoServerSecurityService implement
          * Initialize a {@link Config} object from a {@link SecurityNamedServiceConfig} instance.
          *
          * @param cfg a {@link SecurityNamedServiceConfig} instance
+         * @throws IllegalStateException if the {@link #applicationName} or the {@link #adminRole} are not deemed valid:
+         *                               a valid {@link #applicationName} or {@link #adminRole} must be <em>non-blank</em>,
+         *                               as per {@link StringUtils#isNotBlank(String)} check rules.
          */
         Config(SecurityNamedServiceConfig cfg) {
             if (! (cfg instanceof IrideSecurityServiceConfig)) {
@@ -401,45 +399,12 @@ public class IrideRoleService extends AbstractGeoServerSecurityService implement
 
             final IrideSecurityServiceConfig irideCfg = (IrideSecurityServiceConfig) cfg;
 
-            this.applicationName         = validateApplicationName(irideCfg.getApplicationName());
-            this.adminRole               = validateAdminRole(irideCfg.getAdminRole());
+            this.applicationName         = irideCfg.getApplicationName();
+            this.adminRole               = irideCfg.getAdminRole();
             this.fallbackRoleServiceName = StringUtils.trimToNull(irideCfg.getFallbackRoleService());
-        }
 
-        /**
-         * Returns the given <code>applicationName</code> if it's deemed a valid,
-         * throwing an {@link IllegalArgumentException} otherwise.<p>
-         *
-         * A valid <code>applicationName</code> must be <em>non-empty</em>, as per {@link StringUtils#isNotBlank(String)} check rules.
-         *
-         * @param applicationName the <code>applicationName</code> to validate
-         * @return the given <code>applicationName</code> if it's deemed valid
-         * @throws IllegalArgumentException if the given <code>applicationName</code> is not deemed valid
-         */
-        private static String validateApplicationName(String applicationName) {
-            if (StringUtils.isBlank(applicationName)) {
-                throw new IllegalArgumentException("Application name must not be of an empty string");
-            }
-
-            return applicationName;
-        }
-
-        /**
-         * Returns the given <code>adminRole</code> if it's deemed a valid,
-         * throwing an {@link IllegalArgumentException} otherwise.<p>
-         *
-         * A valid <code>adminRole</code> must be <em>non-empty</em>, as per {@link StringUtils#isNotBlank(String)} check rules.
-         *
-         * @param adminRole the <code>adminRole</code> to validate
-         * @return the given <code>adminRole</code> if it's deemed valid
-         * @throws IllegalArgumentException if the given <code>adminRole</code> is not deemed valid
-         */
-        private static String validateAdminRole(String adminRole) {
-            if (StringUtils.isBlank(adminRole)) {
-                throw new IllegalArgumentException("Admin role must not be of an empty string");
-            }
-
-            return adminRole;
+            Preconditions.checkState(StringUtils.isNotBlank(this.applicationName), "Application name must not be of an empty string");
+            Preconditions.checkState(StringUtils.isNotBlank(this.adminRole), "Admin role must not be of an empty string");
         }
 
         /**
