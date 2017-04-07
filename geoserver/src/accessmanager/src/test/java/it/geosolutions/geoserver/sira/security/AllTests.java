@@ -34,7 +34,8 @@ import org.junit.runners.Suite.SuiteClasses;
     ConfigTest.class,
     ExpressionTest.class,
     SiraSecurityTest.class,
-    IrideSiraSecurityTest.class
+    IrideSiraSecurityTest.class,
+    SiraInfoPersonaTest.class
 })
 public final class AllTests {
 
