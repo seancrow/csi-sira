@@ -18,21 +18,19 @@
  */
 package it.geosolutions.geoserver.sira.security.expression;
 
-import it.geosolutions.geoserver.sira.security.config.Attributes.Choose.When;
-import it.geosolutions.geoserver.sira.security.config.Rule;
-import it.geosolutions.geoserver.sira.security.config.SiraAccessManagerConfiguration;
-import it.geosolutions.geoserver.sira.security.config.ValidatableConfiguration;
-
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.geoserver.security.AccessMode;
+import org.geoserver.security.impl.GeoServerUser;
 import org.geoserver.security.iride.entity.IrideInfoPersona;
+import org.geoserver.security.iride.util.IrideUserProperties;
 import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.filter.text.ecql.ECQL;
 import org.geotools.util.logging.Logging;
@@ -43,12 +41,18 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.ReflectionUtils;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import it.geosolutions.geoserver.sira.security.config.Attributes.Choose.When;
+import it.geosolutions.geoserver.sira.security.config.Rule;
+import it.geosolutions.geoserver.sira.security.config.SiraAccessManagerConfiguration;
+import it.geosolutions.geoserver.sira.security.config.ValidatableConfiguration;
 
 /**
  * <code>CSI</code> <code>SIRA</code> <code>Access Manager</code>
@@ -290,20 +294,69 @@ public class ExpressionRuleEngine {
         }
 
         /**
-         * Verifies if the given {@link IrideInfoPersona} instance has an authority property with the given value,
-         * returning {@code true} if so, {@code false} otherwise.
          *
-         * @param infoPersona
-         * @param authority
-         * @return {@code true} if the given {@link IrideInfoPersona} instance has an authority property with the given value, {@code false} otherwise
+         * @param role
+         * @param key
+         * @param value
+         * @return 
          */
-        public static boolean hasAuthority(IrideInfoPersona infoPersona, String authority) {
-            if (infoPersona == null || StringUtils.isBlank(authority)) {
-                return false;
-            }
+		public static boolean hasAuthority(String role, String key, String value) {
+			if (StringUtils.isBlank(role) || StringUtils.isBlank(key) || StringUtils.isBlank(value)) {
+				return false;
+			}
 
-            return authority.equals(infoPersona.getProperties().get("ID_AUTORITA"));
-        }
+			Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			if (principal instanceof GeoServerUser) {
+				IrideInfoPersona[] infoPersonae = getInfoPersonae((GeoServerUser) principal);
+				if (infoPersonae == null) {
+					return false;
+				}
+
+				for (IrideInfoPersona ip : infoPersonae) {
+					if (ip == null || !role.equals(ip.getRole().getCode())) {
+						continue;
+					}
+
+					Map<String, Object> properties = ip.getProperties();
+					if (properties != null && value.equals(properties.get(key))) {
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		/**
+		 * 
+		 * @param role
+		 * @param value
+		 * @return
+		 */
+		public static boolean hasIstatProvincia(String role, String value) {
+			final String KEY = "ISTAT_PROVINCIA";
+			return hasAuthority(role, KEY, value);
+		}
+
+		/**
+		 * 
+		 * @param role
+		 * @param value
+		 * @return
+		 */
+		public static boolean hasIstatComune(String role, String value) {
+			final String KEY = "ISTAT_COMUNE";
+			return hasAuthority(role, KEY, value);
+		}
+
+		private static IrideInfoPersona[] getInfoPersonae(GeoServerUser user) {
+			Properties properties = user.getProperties();
+			if (properties != null && properties.containsKey(IrideUserProperties.INFO_PERSONAE)) {
+				return (IrideInfoPersona[]) properties.get(IrideUserProperties.INFO_PERSONAE);
+			}
+
+			return null;
+		}
 
     }
 
