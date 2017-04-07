@@ -300,63 +300,63 @@ public class ExpressionRuleEngine {
          * @param value
          * @return 
          */
-		public static boolean hasAuthority(String role, String key, String value) {
-			if (StringUtils.isBlank(role) || StringUtils.isBlank(key) || StringUtils.isBlank(value)) {
-				return false;
-			}
+        public static boolean hasAuthority(String role, String key, String value) {
+            if (StringUtils.isBlank(role) || StringUtils.isBlank(key) || StringUtils.isBlank(value)) {
+                return false;
+            }
 
-			Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			if (principal instanceof GeoServerUser) {
-				IrideInfoPersona[] infoPersonae = getInfoPersonae((GeoServerUser) principal);
-				if (infoPersonae == null) {
-					return false;
-				}
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal instanceof GeoServerUser) {
+                IrideInfoPersona[] infoPersonae = getInfoPersonae((GeoServerUser) principal);
+                if (infoPersonae == null) {
+                    return false;
+                }
 
-				for (IrideInfoPersona ip : infoPersonae) {
-					if (ip == null || !role.equals(ip.getRole().getCode())) {
-						continue;
-					}
+                for (IrideInfoPersona ip : infoPersonae) {
+                    if (ip == null || !role.equals(ip.getRole().getCode())) {
+                        continue;
+                    }
 
-					Map<String, Object> properties = ip.getProperties();
-					if (properties != null && value.equals(properties.get(key))) {
-						return true;
-					}
-				}
-			}
+                    Map<String, Object> properties = ip.getProperties();
+                    if (properties != null && value.equals(properties.get(key))) {
+                        return true;
+                    }
+                }
+            }
 
-			return false;
-		}
+            return false;
+        }
 
-		/**
-		 * 
-		 * @param role
-		 * @param value
-		 * @return
-		 */
-		public static boolean hasIstatProvincia(String role, String value) {
-			final String KEY = "ISTAT_PROVINCIA";
-			return hasAuthority(role, KEY, value);
-		}
+        /**
+        * 
+        * @param role
+        * @param value
+        * @return
+        */
+        public static boolean hasIstatProvincia(String role, String value) {
+            final String KEY = "ISTAT_PROVINCIA";
+            return hasAuthority(role, KEY, value);
+        }
 
-		/**
-		 * 
-		 * @param role
-		 * @param value
-		 * @return
-		 */
-		public static boolean hasIstatComune(String role, String value) {
-			final String KEY = "ISTAT_COMUNE";
-			return hasAuthority(role, KEY, value);
-		}
+        /**
+        * 
+        * @param role
+        * @param value
+        * @return
+        */
+        public static boolean hasIstatComune(String role, String value) {
+            final String KEY = "ISTAT_COMUNE";
+            return hasAuthority(role, KEY, value);
+        }
 
-		private static IrideInfoPersona[] getInfoPersonae(GeoServerUser user) {
-			Properties properties = user.getProperties();
-			if (properties != null && properties.containsKey(IrideUserProperties.INFO_PERSONAE)) {
-				return (IrideInfoPersona[]) properties.get(IrideUserProperties.INFO_PERSONAE);
-			}
+        private static IrideInfoPersona[] getInfoPersonae(GeoServerUser user) {
+            Properties properties = user.getProperties();
+            if (properties != null && properties.containsKey(IrideUserProperties.INFO_PERSONAE)) {
+                return (IrideInfoPersona[]) properties.get(IrideUserProperties.INFO_PERSONAE);
+            }
 
-			return null;
-		}
+            return null;
+        }
 
     }
 
