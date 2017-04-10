@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -317,7 +318,7 @@ public class ExpressionRuleEngine {
 
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (principal instanceof GeoServerUser) {
-                IrideInfoPersona[] infoPersonae = getInfoPersonae((GeoServerUser) principal);
+                Set<IrideInfoPersona> infoPersonae = getInfoPersonae((GeoServerUser) principal);
                 if (infoPersonae == null) {
                     return false;
                 }
@@ -359,10 +360,11 @@ public class ExpressionRuleEngine {
             return hasAuthority(role, KEY, value);
         }
 
-        private static IrideInfoPersona[] getInfoPersonae(GeoServerUser user) {
+        @SuppressWarnings("unchecked")
+        private static Set<IrideInfoPersona> getInfoPersonae(GeoServerUser user) {
             Properties properties = user.getProperties();
             if (properties.containsKey(IrideUserProperties.INFO_PERSONAE)) {
-                return (IrideInfoPersona[]) properties.get(IrideUserProperties.INFO_PERSONAE);
+                return (Set<IrideInfoPersona>) properties.get(IrideUserProperties.INFO_PERSONAE);
             }
 
             return null;

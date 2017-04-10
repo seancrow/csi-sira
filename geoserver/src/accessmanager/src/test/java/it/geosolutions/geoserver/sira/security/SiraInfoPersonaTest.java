@@ -35,6 +35,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 
+import com.google.common.collect.ImmutableSet;
 import com.thoughtworks.xstream.XStream;
 
 import it.geosolutions.geoserver.sira.security.config.Rule;
@@ -112,7 +113,7 @@ public class SiraInfoPersonaTest extends AbstractAppSchemaTestSupport {
         properties1.put("ISTAT_COMUNE", "001272");
         IrideInfoPersona ip1 = new IrideInfoPersona(IrideRole.parseRole(PA_GEN_DECSIRA), properties1);
 
-        this.login("DEMO 32", "PIEMONTE", new String[] { PA_GEN_DECSIRA }, DEMO_32, new IrideInfoPersona[] {ip1});
+        this.login("DEMO 32", "PIEMONTE", new String[] { PA_GEN_DECSIRA }, DEMO_32, ImmutableSet.<IrideInfoPersona>of(ip1));
         final AccessMode accessMode = this.expressionRuleEngine.evaluateAccessMode(r);
         assertThat(accessMode, is(AccessMode.READ));
     }
@@ -134,7 +135,7 @@ public class SiraInfoPersonaTest extends AbstractAppSchemaTestSupport {
         properties1.put("ISTAT_PROVINCIA", "001");
         IrideInfoPersona ip1 = new IrideInfoPersona(IrideRole.parseRole(PA_GEN_DECSIRA), properties1);
 
-        this.login("DEMO 32", "PIEMONTE", new String[] { PA_GEN_DECSIRA }, DEMO_32, new IrideInfoPersona[] {ip1});
+        this.login("DEMO 32", "PIEMONTE", new String[] { PA_GEN_DECSIRA }, DEMO_32, ImmutableSet.<IrideInfoPersona>of(ip1));
         final AccessMode accessMode = this.expressionRuleEngine.evaluateAccessMode(r);
         assertThat(accessMode, is(AccessMode.READ));
     }
@@ -156,7 +157,7 @@ public class SiraInfoPersonaTest extends AbstractAppSchemaTestSupport {
         properties1.put("ISTAT_COMUNE", "001272");
         IrideInfoPersona ip1 = new IrideInfoPersona(IrideRole.parseRole(PA_GEN_DECSIRA), properties1);
 
-        this.login("DEMO 32", "PIEMONTE", new String[] { PA_GEN_DECSIRA }, DEMO_32, new IrideInfoPersona[] {ip1});
+        this.login("DEMO 32", "PIEMONTE", new String[] { PA_GEN_DECSIRA }, DEMO_32, ImmutableSet.<IrideInfoPersona>of(ip1));
         final AccessMode accessMode = this.expressionRuleEngine.evaluateAccessMode(r);
         assertThat(accessMode, is(AccessMode.READ));
     }
@@ -178,7 +179,7 @@ public class SiraInfoPersonaTest extends AbstractAppSchemaTestSupport {
         assertTrue(configFile.exists());
     }
 
-    private void login(String username, String password, String[] roles, IrideIdentity identity, IrideInfoPersona[] infoPersonae) {
+    private void login(String username, String password, String[] roles, IrideIdentity identity, Set<IrideInfoPersona> infoPersonae) {
         SecurityContextHolder.setContext(new SecurityContextImpl());
 
         final Set<GrantedAuthority> authorities = new LinkedHashSet<>();
