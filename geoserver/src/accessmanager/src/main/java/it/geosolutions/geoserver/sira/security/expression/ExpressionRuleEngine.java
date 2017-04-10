@@ -251,7 +251,17 @@ public class ExpressionRuleEngine {
             ));
             _BUILTINS.put("hasAuthority", ReflectionUtils.findMethod(
                 Functions.class, "hasAuthority", new Class<?>[] {
-                    IrideInfoPersona.class, String.class
+                    String.class, String.class, String.class
+                }
+            ));
+            _BUILTINS.put("hasIstatProvincia", ReflectionUtils.findMethod(
+                Functions.class, "hasIstatProvincia", new Class<?>[] {
+                    String.class, String.class
+                }
+            ));
+            _BUILTINS.put("hasIstatComune", ReflectionUtils.findMethod(
+                Functions.class, "hasIstatComune", new Class<?>[] {
+                    String.class, String.class
                 }
             ));
         }
@@ -294,12 +304,13 @@ public class ExpressionRuleEngine {
         }
 
         /**
-         *
+         * 
          * @param role
          * @param key
          * @param value
-         * @return 
+         * @return
          */
+
         public static boolean hasAuthority(String role, String key, String value) {
             if (StringUtils.isBlank(role) || StringUtils.isBlank(key) || StringUtils.isBlank(value)) {
                 return false;
@@ -328,27 +339,28 @@ public class ExpressionRuleEngine {
         }
 
         /**
-        * 
-        * @param role
-        * @param value
-        * @return
-        */
+         * 
+         * @param role
+         * @param value
+         * @return
+         */
         public static boolean hasIstatProvincia(String role, String value) {
             final String KEY = "ISTAT_PROVINCIA";
             return hasAuthority(role, KEY, value);
         }
 
         /**
-        * 
-        * @param role
-        * @param value
-        * @return
-        */
+         * 
+         * @param role
+         * @param value
+         * @return
+         */
         public static boolean hasIstatComune(String role, String value) {
             final String KEY = "ISTAT_COMUNE";
             return hasAuthority(role, KEY, value);
         }
-
+        
+        
         private static IrideInfoPersona[] getInfoPersonae(GeoServerUser user) {
             Properties properties = user.getProperties();
             if (properties != null && properties.containsKey(IrideUserProperties.INFO_PERSONAE)) {
