@@ -310,7 +310,6 @@ public class ExpressionRuleEngine {
          * @param value
          * @return
          */
-
         public static boolean hasAuthority(String role, String key, String value) {
             if (StringUtils.isBlank(role) || StringUtils.isBlank(key) || StringUtils.isBlank(value)) {
                 return false;
@@ -329,7 +328,7 @@ public class ExpressionRuleEngine {
                     }
 
                     Map<String, Object> properties = ip.getProperties();
-                    if (properties != null && value.equals(properties.get(key))) {
+                    if (value.equals(properties.get(key))) {
                         return true;
                     }
                 }
@@ -359,11 +358,10 @@ public class ExpressionRuleEngine {
             final String KEY = "ISTAT_COMUNE";
             return hasAuthority(role, KEY, value);
         }
-        
-        
+
         private static IrideInfoPersona[] getInfoPersonae(GeoServerUser user) {
             Properties properties = user.getProperties();
-            if (properties != null && properties.containsKey(IrideUserProperties.INFO_PERSONAE)) {
+            if (properties.containsKey(IrideUserProperties.INFO_PERSONAE)) {
                 return (IrideInfoPersona[]) properties.get(IrideUserProperties.INFO_PERSONAE);
             }
 
