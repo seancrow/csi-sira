@@ -102,7 +102,7 @@ public class SiraInfoPersonaTest extends AbstractAppSchemaTestSupport {
                          + "    <roles>ADMIN</roles>"
                          + "    <workspace>*</workspace>"
                          + "    <layer>*</layer>"
-                         + "    <accessMode>#{#if(#hasAuthority('PA_GEN_DECSIRA', 'ISTAT_COMUNE', '001272'), 'READ', 'IGNORERULE')}</accessMode>"
+                         + "    <accessMode>#{#if(#hasAuthority('PA_GEN_DECSIRA', '6'), 'READ', 'IGNORERULE')}</accessMode>"
                          + "    <filter>INCLUDE</filter>"
                          + "    <hiddenAttributes />"
                          + "</Rule>";
@@ -110,7 +110,7 @@ public class SiraInfoPersonaTest extends AbstractAppSchemaTestSupport {
         final Rule r = (Rule) this.xstream.fromXML(xml);
 
         Properties properties1 = new Properties();
-        properties1.put("ISTAT_COMUNE", "001272");
+        properties1.put("ID_AUTORITA", "6");
         IrideInfoPersona ip1 = new IrideInfoPersona(IrideRole.parseRole(PA_GEN_DECSIRA), properties1);
 
         this.login("DEMO 32", "PIEMONTE", new String[] { PA_GEN_DECSIRA }, DEMO_32, ImmutableSet.<IrideInfoPersona>of(ip1));

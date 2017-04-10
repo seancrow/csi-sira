@@ -47,6 +47,7 @@ import org.springframework.util.ReflectionUtils;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -252,7 +253,7 @@ public class ExpressionRuleEngine {
             ));
             _BUILTINS.put("hasAuthority", ReflectionUtils.findMethod(
                 Functions.class, "hasAuthority", new Class<?>[] {
-                    String.class, String.class, String.class
+                    String.class, String.class
                 }
             ));
             _BUILTINS.put("hasIstatProvincia", ReflectionUtils.findMethod(
@@ -307,27 +308,42 @@ public class ExpressionRuleEngine {
         /**
          * 
          * @param role
-         * @param key
          * @param value
          * @return
          */
-        public static boolean hasAuthority(String role, String key, String value) {
+        public static boolean hasAuthority(String role, String value) {
+            return hasInfoPersonaProperty(role, "ID_AUTORITA", value);
+        }
+
+        /**
+         * 
+         * @param role
+         * @param value
+         * @return
+         */
+        public static boolean hasIstatProvincia(String role, String value) {
+            return hasInfoPersonaProperty(role, "ISTAT_PROVINCIA", value);
+        }
+
+        /**
+         * 
+         * @param role
+         * @param value
+         * @return
+         */
+        public static boolean hasIstatComune(String role, String value) {
+            return hasInfoPersonaProperty(role, "ISTAT_COMUNE", value);
+        }
+
+        private static boolean hasInfoPersonaProperty(String role, String key, String value) {
             if (StringUtils.isBlank(role) || StringUtils.isBlank(key) || StringUtils.isBlank(value)) {
                 return false;
             }
 
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (principal instanceof GeoServerUser) {
-                Set<IrideInfoPersona> infoPersonae = getInfoPersonae((GeoServerUser) principal);
-                if (infoPersonae == null) {
-                    return false;
-                }
-
-                for (IrideInfoPersona ip : infoPersonae) {
-                    if (ip == null || !role.equals(ip.getRole().getCode())) {
-                        continue;
-                    }
-
+            Set<IrideInfoPersona> infoPersonae = getInfoPersonae((GeoServerUser) principal);
+            for (IrideInfoPersona ip : infoPersonae) {
+                if (ip.getRole().getCode().equals(role)) {
                     Map<String, Object> properties = ip.getProperties();
                     if (value.equals(properties.get(key))) {
                         return true;
@@ -338,28 +354,6 @@ public class ExpressionRuleEngine {
             return false;
         }
 
-        /**
-         * 
-         * @param role
-         * @param value
-         * @return
-         */
-        public static boolean hasIstatProvincia(String role, String value) {
-            final String KEY = "ISTAT_PROVINCIA";
-            return hasAuthority(role, KEY, value);
-        }
-
-        /**
-         * 
-         * @param role
-         * @param value
-         * @return
-         */
-        public static boolean hasIstatComune(String role, String value) {
-            final String KEY = "ISTAT_COMUNE";
-            return hasAuthority(role, KEY, value);
-        }
-
         @SuppressWarnings("unchecked")
         private static Set<IrideInfoPersona> getInfoPersonae(GeoServerUser user) {
             Properties properties = user.getProperties();
@@ -367,7 +361,7 @@ public class ExpressionRuleEngine {
                 return (Set<IrideInfoPersona>) properties.get(IrideUserProperties.INFO_PERSONAE);
             }
 
-            return null;
+            return ImmutableSet.<IrideInfoPersona>of();
         }
 
     }
