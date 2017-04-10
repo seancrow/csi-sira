@@ -18,7 +18,9 @@
  */
 package it.geosolutions.geoserver.sira.security;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -46,6 +48,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
  *
  * @author "Simone Cornacchia - seancrow76@gmail.com, simone.cornacchia@consulenti.csi.it (CSI:71740)"
@@ -70,7 +74,7 @@ public class IrideSiraSecurityTest extends AbstractAppSchemaTestSupport {
         assertNull(aua);
 
         // login as user with role PA_SPEC_DECSIRA
-        this.login("DEMO 20", "PIEMONTE", new String[] { PA_SPEC_DECSIRA }, DEMO_20, new IrideInfoPersona[] {});
+        this.login("DEMO 20", "PIEMONTE", new String[] { PA_SPEC_DECSIRA }, DEMO_20, ImmutableSet.<IrideInfoPersona>of());
 
         aua = catalog.getFeatureTypeByName("sira:AutorizzazioneUnicaAmbientale");
         assertNotNull(aua);
@@ -144,7 +148,7 @@ public class IrideSiraSecurityTest extends AbstractAppSchemaTestSupport {
         assertTrue(configFile.exists());
     }
 
-    private void login(String username, String password, String[] roles, IrideIdentity identity, IrideInfoPersona[] infoPersonae) {
+    private void login(String username, String password, String[] roles, IrideIdentity identity, Set<IrideInfoPersona> infoPersonae) {
         SecurityContextHolder.setContext(new SecurityContextImpl());
 
         final Set<GrantedAuthority> authorities = new LinkedHashSet<>();
