@@ -18,6 +18,17 @@
  */
 package it.geosolutions.geoserver.sira.security.expression;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.geotools.filter.text.ecql.ECQL.toFilter;
+import static org.geotools.util.logging.Logging.getLogger;
+import static org.springframework.util.ReflectionUtils.findMethod;
+import it.geosolutions.geoserver.sira.security.config.Attributes.Choose.When;
+import it.geosolutions.geoserver.sira.security.config.Rule;
+import it.geosolutions.geoserver.sira.security.config.SiraAccessManagerConfiguration;
+import it.geosolutions.geoserver.sira.security.config.ValidatableConfiguration;
+
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
@@ -27,14 +38,11 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringUtils;
 import org.geoserver.security.AccessMode;
 import org.geoserver.security.impl.GeoServerUser;
 import org.geoserver.security.iride.entity.IrideInfoPersona;
 import org.geoserver.security.iride.util.IrideUserProperties;
 import org.geotools.filter.text.cql2.CQLException;
-import org.geotools.filter.text.ecql.ECQL;
-import org.geotools.util.logging.Logging;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.PropertyName;
 import org.springframework.expression.Expression;
@@ -43,18 +51,10 @@ import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.ReflectionUtils;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-import it.geosolutions.geoserver.sira.security.config.Attributes.Choose.When;
-import it.geosolutions.geoserver.sira.security.config.Rule;
-import it.geosolutions.geoserver.sira.security.config.SiraAccessManagerConfiguration;
-import it.geosolutions.geoserver.sira.security.config.ValidatableConfiguration;
 
 /**
  * <code>CSI</code> <code>SIRA</code> <code>Access Manager</code>
@@ -67,7 +67,7 @@ public class ExpressionRuleEngine {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logging.getLogger(ExpressionRuleEngine.class);
+    private static final Logger LOGGER = getLogger(ExpressionRuleEngine.class);
 
     private final StandardEvaluationContext evalContext;
 
@@ -114,7 +114,7 @@ public class ExpressionRuleEngine {
      * @param functions
      */
     public void setFunctions(Map<String, Method> functions) {
-        Preconditions.checkNotNull(functions, "functions must not be null");
+        checkNotNull(functions, "functions must not be null");
 
         for (final Entry<String, Method> entry : functions.entrySet()) {
             this.setFunction(entry.getKey(), entry.getValue());
@@ -205,7 +205,7 @@ public class ExpressionRuleEngine {
      * @throws CQLException
      */
     private static Filter toECQLFilter(String filter) throws CQLException {
-        return ECQL.toFilter(filter, SiraAccessManagerConfiguration.FF);
+        return toFilter(filter, SiraAccessManagerConfiguration.FF);
     }
 
     /**
@@ -216,8 +216,8 @@ public class ExpressionRuleEngine {
      * @throws IllegalArgumentException if the given {@link ValidatableConfiguration} instance is not valid
      */
     private void checkRulePreconditions(ValidatableConfiguration configuration) {
-        Preconditions.checkNotNull(configuration, "configuration must not be null");
-        Preconditions.checkArgument(configuration.isValid(), "configuration must be valid, given: " + configuration);
+        checkNotNull(configuration, "configuration must not be null");
+        checkArgument(configuration.isValid(), "configuration must be valid, given: " + configuration);
     }
 
     /**
@@ -242,41 +242,33 @@ public class ExpressionRuleEngine {
     public static final class Functions {
 
         /**
-         * Inner map of method name/{@link Method} instance pairs.
-         */
-        private static final Map<String, Method> _BUILTINS = Maps.newHashMap();
-        static {
-            _BUILTINS.put("if", ReflectionUtils.findMethod(
-                Functions.class, "iif", new Class<?>[] {
-                    boolean.class, Object.class, Object.class
-                }
-            ));
-            _BUILTINS.put("hasAuthority", ReflectionUtils.findMethod(
-                Functions.class, "hasAuthority", new Class<?>[] {
-                    String.class, String.class
-                }
-            ));
-            _BUILTINS.put("hasIstatProvincia", ReflectionUtils.findMethod(
-                Functions.class, "hasIstatProvincia", new Class<?>[] {
-                    String.class, String.class
-                }
-            ));
-            _BUILTINS.put("hasIstatComune", ReflectionUtils.findMethod(
-                Functions.class, "hasIstatComune", new Class<?>[] {
-                    String.class, String.class
-                }
-            ));
-        }
-
-        /**
-         * Exported, immutable map of method name/{@link Method} instance pairs usable as {@link ExpressionRuleEngine#setFunctions(Map)} parameter, to register expression engine "functions".
-         * <p>"Functions":
+         * Exported, immutable map of method name/{@link Method} instance pairs usable as {@link ExpressionRuleEngine#setFunctions(Map)} parameter, to register expression engine custom functions.
+         * <p>Builtin custom functions:
          * <ul>
          *   <li>if : {@link #iif(boolean, Object, Object)}</li>
-         *   <li>hasAuthority : {@link #hasAuthority(String, String, String)}</li>
+         *   <li>hasAuthority : {@link #hasAuthority(String, String)}</li>
+         *   <li>hasAuthority : {@link #hasIstatProvincia(String, String)}</li>
+         *   <li>hasAuthority : {@link #hasIstatComune(String, String)}</li>
          * <ul>
          */
-        public static final Map<String, Method> BUILTINS = ImmutableMap.<String, Method>copyOf(_BUILTINS);
+        public static final Map<String, Method> BUILTINS = ImmutableMap.of(
+            "if", findMethod(
+            Functions.class, "iif", new Class<?>[] {
+                boolean.class, Object.class, Object.class
+            }),
+            "hasAuthority", findMethod(
+            Functions.class, "hasAuthority", new Class<?>[] {
+                String.class, String.class
+            }),
+            "hasIstatProvincia", findMethod(
+            Functions.class, "hasIstatProvincia", new Class<?>[] {
+                String.class, String.class
+            }),
+            "hasIstatComune", findMethod(
+            Functions.class, "hasIstatComune", new Class<?>[] {
+                String.class, String.class
+            })
+        );
 
         /**
          * Constructor.
@@ -306,45 +298,72 @@ public class ExpressionRuleEngine {
         }
 
         /**
-         * 
-         * @param role
-         * @param value
-         * @return
+         * Check to see if the given <code>ID_AUTORITA</code> {@code value} is present
+         * in authenticated user's {@link IrideInfoPersona}s, for the given <code>IRIDE</code> {@code role},
+         * returning {@code true} if found, {@code false} otherwise.
+         *
+         * @param role the given <code>IRIDE</code> {@code role}
+         * @param value the given property {@code value}
+         * @return {@code true} if the given <code>ID_AUTORITA</code> {@code value} is found
+         *         in authenticated user's {@link IrideInfoPersona}s, for the given <code>IRIDE</code> {@code role},
+         *         {@code false} otherwise.
          */
         public static boolean hasAuthority(String role, String value) {
             return hasInfoPersonaProperty(role, "ID_AUTORITA", value);
         }
 
         /**
-         * 
-         * @param role
-         * @param value
-         * @return
+         * Check to see if the given <code>ISTAT_PROVINCIA</code> {@code value} is present
+         * in authenticated user's {@link IrideInfoPersona}s, for the given <code>IRIDE</code> {@code role},
+         * returning {@code true} if found, {@code false} otherwise.
+         *
+         * @param role the given <code>IRIDE</code> {@code role}
+         * @param value the given property {@code value}
+         * @return {@code true} if the given <code>ISTAT_PROVINCIA</code> {@code value} is found
+         *         in authenticated user's {@link IrideInfoPersona}s, for the given <code>IRIDE</code> {@code role},
+         *         {@code false} otherwise.
          */
         public static boolean hasIstatProvincia(String role, String value) {
             return hasInfoPersonaProperty(role, "ISTAT_PROVINCIA", value);
         }
 
         /**
-         * 
-         * @param role
-         * @param value
-         * @return
+         * Check to see if the given <code>ISTAT_COMUNE</code> {@code value} is present
+         * in authenticated user's {@link IrideInfoPersona}s, for the given <code>IRIDE</code> {@code role},
+         * returning {@code true} if found, {@code false} otherwise.
+         *
+         * @param role the given <code>IRIDE</code> {@code role}
+         * @param value the given property {@code value}
+         * @return {@code true} if the given <code>ISTAT_COMUNE</code> {@code value} is found
+         *         in authenticated user's {@link IrideInfoPersona}s, for the given <code>IRIDE</code> {@code role},
+         *         {@code false} otherwise.
          */
         public static boolean hasIstatComune(String role, String value) {
             return hasInfoPersonaProperty(role, "ISTAT_COMUNE", value);
         }
 
+        /**
+         * Check to see if the given property ({@code key}) {@code value} is present
+         * in authenticated user's {@link IrideInfoPersona}s, for the given <code>IRIDE</code> {@code role},
+         * returning {@code true} if found, {@code false} otherwise.
+         *
+         * @param role the given <code>IRIDE</code> {@code role}
+         * @param key the given property {@code key}
+         * @param value the given property {@code value}
+         * @return {@code true} if the given property ({@code key}) {@code value} is found
+         *         in authenticated user's {@link IrideInfoPersona}s, for the given <code>IRIDE</code> {@code role},
+         *         {@code false} otherwise.
+         */
         private static boolean hasInfoPersonaProperty(String role, String key, String value) {
-            if (StringUtils.isBlank(role) || StringUtils.isBlank(key) || StringUtils.isBlank(value)) {
+            if (isBlank(role) || isBlank(key) || isBlank(value)) {
                 return false;
             }
 
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            Set<IrideInfoPersona> infoPersonae = getInfoPersonae((GeoServerUser) principal);
-            for (IrideInfoPersona ip : infoPersonae) {
+            final Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            final Set<IrideInfoPersona> infoPersonae = getInfoPersonae((GeoServerUser) principal);
+            for (final IrideInfoPersona ip : infoPersonae) {
                 if (ip.getRole().getCode().equals(role)) {
-                    Map<String, Object> properties = ip.getProperties();
+                    final Map<String, Object> properties = ip.getProperties();
                     if (value.equals(properties.get(key))) {
                         return true;
                     }
@@ -354,14 +373,22 @@ public class ExpressionRuleEngine {
             return false;
         }
 
+        /**
+         * Extracts the given {@link GeoServerUser} instance's {@link IrideInfoPersona}s.
+         * If none are found, an empty, immutable set is returned.
+         *
+         * @param user the given {@link GeoServerUser} instance to extract {@link IrideInfoPersona}s from.
+         * @return the given {@link GeoServerUser} instance's {@link IrideInfoPersona}s,
+         *         or an empty, immutable set if none are found.
+         */
         @SuppressWarnings("unchecked")
         private static Set<IrideInfoPersona> getInfoPersonae(GeoServerUser user) {
-            Properties properties = user.getProperties();
+            final Properties properties = user.getProperties();
             if (properties.containsKey(IrideUserProperties.INFO_PERSONAE)) {
                 return (Set<IrideInfoPersona>) properties.get(IrideUserProperties.INFO_PERSONAE);
             }
 
-            return ImmutableSet.<IrideInfoPersona>of();
+            return ImmutableSet.of();
         }
 
     }
