@@ -247,8 +247,8 @@ public class ExpressionRuleEngine {
          * <ul>
          *   <li>if : {@link #iif(boolean, Object, Object)}</li>
          *   <li>hasAuthority : {@link #hasAuthority(String, String)}</li>
-         *   <li>hasAuthority : {@link #hasIstatProvincia(String, String)}</li>
-         *   <li>hasAuthority : {@link #hasIstatComune(String, String)}</li>
+         *   <li>hasIstatProvincia : {@link #hasIstatProvincia(String, String)}</li>
+         *   <li>hasIstatComune : {@link #hasIstatComune(String, String)}</li>
          * <ul>
          */
         public static final Map<String, Method> BUILTINS = ImmutableMap.of(
