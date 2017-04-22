@@ -51,6 +51,7 @@ import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.ReflectionUtils;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -252,22 +253,10 @@ public class ExpressionRuleEngine {
          * <ul>
          */
         public static final Map<String, Method> BUILTINS = ImmutableMap.of(
-            "if", findMethod(
-            Functions.class, "iif", new Class<?>[] {
-                boolean.class, Object.class, Object.class
-            }),
-            "hasAuthority", findMethod(
-            Functions.class, "hasAuthority", new Class<?>[] {
-                String.class, String.class
-            }),
-            "hasIstatProvincia", findMethod(
-            Functions.class, "hasIstatProvincia", new Class<?>[] {
-                String.class, String.class
-            }),
-            "hasIstatComune", findMethod(
-            Functions.class, "hasIstatComune", new Class<?>[] {
-                String.class, String.class
-            })
+            "if", function("iif", boolean.class, Object.class, Object.class),
+            "hasAuthority", function("hasAuthority", String.class, String.class),
+            "hasIstatProvincia", function("hasIstatProvincia", String.class, String.class),
+            "hasIstatComune", function("hasIstatComune", String.class, String.class)
         );
 
         /**
@@ -389,6 +378,18 @@ public class ExpressionRuleEngine {
             }
 
             return ImmutableSet.of();
+        }
+
+        /**
+         * Helper used for custom functions (i.e.: {@link Functions} {@link Method} objects) registering.
+         *
+         * @param name name of the custom function (i.e.: {@link Functions} {@link Method} object)
+         * @param paramTypes the parameter types of the method (may be {@code null} to indicate any signature)
+         * @see ReflectionUtils#findMethod(Class, String, Class...)
+         * @return the {@link Method} object for the registered custom function
+         */
+        private static Method function (String name, Class<?>... paramTypes) {
+            return findMethod(Functions.class, name, paramTypes);
         }
 
     }
